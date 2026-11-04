@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Anmol Lab | Diagnostic Laboratory",
+  title: "Anmol Health Care Lab | Faisalabad",
   description:
-    "Anmol Lab diagnostic laboratory website. Explore laboratory tests, health packages and available services.",
+    "Explore diagnostic test information and connect with Anmol Health Care Lab in Faisalabad.",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
