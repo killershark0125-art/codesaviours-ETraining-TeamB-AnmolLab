@@ -2,6 +2,7 @@
 import SiteHeader from "@/components/layout/site-header";
 import CellularBackground from "@/components/home/cellular-background";
 import TestFinder from "@/components/home/test-finder";
+import BrandInfoTicker from "@/components/home/brand-info-ticker";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -14,58 +15,51 @@ export default function Home() {
       <SiteHeader />
 
       <main>
-        {/* HERO — FULL-WIDTH CELLS BACKGROUND */}
-        <section id="home" className="cinema-hero">
-
+        {/* FULL-SCREEN EDITORIAL HERO */}
+        <section
+          id="home"
+          className="cinema-hero"
+          aria-labelledby="cinema-hero-title"
+        >
           <CellularBackground />
 
-          <div className="cinema-hero-shade" />
+          <div className="cinema-hero-shade" aria-hidden="true" />
 
           <div className="container cinema-hero-inner">
             <div className="cinema-hero-copy">
-
-              <div className="cinema-hero-kicker">
-                <span />
-                ANMOL HEALTH CARE LAB
-                <span className="kicker-divider">/</span>
-                FAISALABAD
+              <div className="cinema-hero-brand" role="group" aria-label="Anmol Health Care Lab">
+                <span className="cinema-hero-brand-name">ANMOL</span>
+                <span className="cinema-hero-brand-subtitle">HEALTH CARE LAB</span>
               </div>
 
-              <h1 className="cinema-hero-title">
-                Detailed
-                <br />
-                diagnostics.
-                <br />
-                <em>A clearer view of your health.</em>
+              <h1 id="cinema-hero-title" className="cinema-hero-title">
+                Detailed diagnostics.
               </h1>
 
-              <p className="cinema-hero-description">
-                Precision in every test. Care in every patient.
-                Explore diagnostic information and connect with
-                Anmol Health Care Lab.
+              <p className="cinema-hero-subtitle">
+                A clearer view of your health.
               </p>
+            </div>
 
+            <div className="cinema-hero-bottom">
               <div className="cinema-hero-actions">
                 <a href="#tests" className="hero-action-primary">
                   Book a Test
-                  <span aria-hidden="true">↗</span>
                 </a>
 
                 <a href="#reports" className="hero-action-secondary">
                   Download Report
                 </a>
               </div>
-            </div>
 
-            <div className="cinema-hero-meta">
-              <span>01 — DIAGNOSTIC INFORMATION</span>
-              <span>PRECISION / CARE / SCIENCE</span>
-              <a href="#tests">
-                EXPLORE THE LAB ↓
+              <a href="#about" className="cinema-hero-explore">
+                Explore the lab
               </a>
-            </div>
+            </div>            
           </div>
         </section>
+
+        <BrandInfoTicker />
 
         {/* TEST SEARCH — SEPARATE FROM HERO */}
         <section id="tests" className="catalogue-search-section">
@@ -76,16 +70,13 @@ export default function Home() {
                 01 / TEST CATALOGUE
               </span>
 
-              <h2 className="catalogue-search-title">
-                Find what
-                <br />
-                you're looking for.
-              </h2>
+<h2 className="catalogue-search-title">
+  Find a test.
+</h2>
 
-              <p>
-                Search diagnostic tests by name, short code
-                or category.
-              </p>
+<p>
+  Enter the test name or short code from your prescription.
+</p>
             </div>
 
             <div className="catalogue-search">
@@ -181,7 +172,7 @@ export default function Home() {
             </h2>
 
             <div className="packages-note">
-              The laboratory's official package names, included
+              The laboratory&apos;s official package names, included
               tests and prices are awaiting confirmation.
               Verified information will be published here.
             </div>
