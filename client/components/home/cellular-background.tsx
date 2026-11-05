@@ -28,10 +28,6 @@ export default function CellularBackground() {
 
         if (disposed || !container) return;
 
-        const isMobile = window.matchMedia(
-          "(max-width: 650px)"
-        ).matches;
-
 
 effect = CELLS.default({
   el: container,

@@ -28,7 +28,6 @@ export default function SiteHeader() {
   return (
     <header className="glass-site-header">
       <div className="container glass-nav-inner">
-
         {/* Brand */}
         <a
           href="/"
@@ -44,13 +43,6 @@ export default function SiteHeader() {
             priority
             className="brand-logo-image"
           />
-
-          <span className="brand-divider" />
-
-          <span className="brand-caption">
-            <strong>DIAGNOSTIC LABORATORY</strong>
-            <small>FAISALABAD · PAKISTAN</small>
-          </span>
         </a>
 
         {/* Desktop navigation */}
@@ -59,7 +51,11 @@ export default function SiteHeader() {
           aria-label="Main navigation"
         >
           {navigation.map((item) => (
-            <a key={item.href} href={item.href}>
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={closeMenu}
+            >
               {item.label}
             </a>
           ))}
@@ -69,7 +65,6 @@ export default function SiteHeader() {
         <div className="glass-nav-actions">
           <a href="#tests" className="nav-book-button">
             Book a Test
-            <span aria-hidden="true">↗</span>
           </a>
 
           <a href="#reports" className="nav-report-button">
@@ -86,8 +81,16 @@ export default function SiteHeader() {
           aria-controls="mobile-navigation"
           onClick={() => setMenuOpen((current) => !current)}
         >
-          <span className={menuOpen ? "menu-line menu-line-open" : "menu-line"} />
-          <span className={menuOpen ? "menu-line menu-line-open" : "menu-line"} />
+          <span
+            className={
+              menuOpen ? "menu-line menu-line-open" : "menu-line"
+            }
+          />
+          <span
+            className={
+              menuOpen ? "menu-line menu-line-open" : "menu-line"
+            }
+          />
         </button>
       </div>
 
@@ -97,7 +100,10 @@ export default function SiteHeader() {
           id="mobile-navigation"
           className="glass-mobile-panel"
         >
-          <nav className="container glass-mobile-links">
+          <nav
+            className="container glass-mobile-links"
+            aria-label="Mobile navigation"
+          >
             {navigation.map((item) => (
               <a
                 key={item.href}
@@ -134,7 +140,8 @@ export default function SiteHeader() {
                 rel="noopener noreferrer"
                 onClick={closeMenu}
               >
-                Contact on WhatsApp ↗
+                Contact on WhatsApp
+                <span aria-hidden="true">↗</span>
               </a>
             )}
           </nav>
