@@ -13,6 +13,8 @@ const testRoutes = require("./routes/testRoutes");
 const packageRoutes = require("./routes/packageRoutes");
 const branchRoutes = require("./routes/branchRoutes");
 const postRoutes = require("./routes/postRoutes");
+const faqRoutes = require("./routes/faqRoutes");
+const inquiryRoutes = require("./routes/inquiryRoutes");
 
 
 app.use(cors());
@@ -27,6 +29,8 @@ app.use("/api/tests", testRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/branches", branchRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/faqs", faqRoutes);
+app.use("/api/inquiries", inquiryRoutes);
 
 
 const startServer = async () => {
