@@ -75,7 +75,7 @@ export default function Home() {
 </h2>
 
 <p>
-  Enter the test name or short code from your prescription.
+  Search for a test by its name.
 </p>
             </div>
 

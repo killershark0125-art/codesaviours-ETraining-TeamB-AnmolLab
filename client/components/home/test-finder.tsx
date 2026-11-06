@@ -146,14 +146,7 @@ export default function TestFinder() {
               ) : (
                 <div className="test-finder__list">
                   {search.result.items.slice(0, 5).map((test) => {
-                    const slugValue =
-                      "slug" in test && typeof test.slug === "string"
-                        ? test.slug.trim()
-                        : "";
-
-                    const testHref = slugValue
-                      ? `/tests/${encodeURIComponent(slugValue)}`
-                      : `/tests?search=${encodeURIComponent(test.name)}`;
+const testHref = `/tests?search=${encodeURIComponent(test.name)}`;
 
                     return (
                       <Link

@@ -23,9 +23,22 @@ type Settled =
 
 export type SearchStatus = "idle" | "loading" | "success" | "error";
 
-export function useTestSearch() {
-  const [input, setInput] = useState("");
-  const [query, setQuery] = useState("");
+type UseTestSearchOptions = {
+  /** Fetch the catalogue immediately, even with an empty search query. */
+  initialLoad?: boolean;
+  /** Optional query supplied by a page URL. */
+  initialQuery?: string;
+  /** Number of results requested per backend page. */
+  limit?: number;
+};
+
+export function useTestSearch(options: UseTestSearchOptions = {}) {
+  const initialQuery = normalizeQuery(options.initialQuery ?? "");
+  const initialLoad = options.initialLoad ?? false;
+  const limit = Math.min(100, Math.max(1, Math.floor(options.limit ?? 8)));
+
+  const [input, setInput] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
@@ -36,24 +49,29 @@ export function useTestSearch() {
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const isActive = query.length >= MIN_QUERY_LENGTH || category !== null;
+  const isActive =
+    initialLoad ||
+    query.length >= MIN_QUERY_LENGTH ||
+    category !== null;
 
   const requestKey = isActive
-    ? `${attempt}|${category ?? ""}|${query}|${page}`
+    ? `${attempt}|${category ?? ""}|${query}|${page}|${limit}`
     : null;
 
-  // Load category options separately from test search results.
+  // Load the category list independently of the test results.
   useEffect(() => {
     const controller = new AbortController();
 
     getTestCategories(controller.signal)
       .then((result) => {
         if (controller.signal.aborted) return;
+
         setCategories(result);
         setCategoriesError(null);
       })
       .catch(() => {
         if (controller.signal.aborted) return;
+
         setCategoriesError("Categories could not be loaded.");
       })
       .finally(() => {
@@ -65,7 +83,7 @@ export function useTestSearch() {
     return () => controller.abort();
   }, []);
 
-  // Search tests when the query, category, page, or retry attempt changes.
+  // Fetch tests when the search, category, page, or retry attempt changes.
   useEffect(() => {
     if (requestKey === null) return;
 
@@ -76,6 +94,7 @@ export function useTestSearch() {
         query,
         category,
         page,
+        limit,
       },
       controller.signal,
     )
@@ -102,9 +121,9 @@ export function useTestSearch() {
       });
 
     return () => controller.abort();
-  }, [requestKey, query, category, page]);
+  }, [requestKey, query, category, page, limit]);
 
-  // Clear pending debounce timers on unmount.
+  // Clear pending debounce timers when the component unmounts.
   useEffect(() => {
     return () => {
       if (timer.current) {
@@ -174,6 +193,7 @@ export function useTestSearch() {
   const changePage = useCallback((nextPage: number) => {
     setPage((current) => {
       const safePage = Math.floor(nextPage);
+
       return Number.isFinite(safePage) && safePage >= 1
         ? safePage
         : current;
@@ -202,6 +222,7 @@ export function useTestSearch() {
     categoriesLoading,
     categoriesError,
     page,
+    limit,
     status,
     result: status === "success" ? (settled?.result ?? null) : null,
     errorMessage: status === "error" ? (settled?.error ?? null) : null,
