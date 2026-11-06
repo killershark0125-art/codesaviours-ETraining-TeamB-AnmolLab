@@ -115,44 +115,79 @@ const getTestById = async(req,res)=>{
     }
 };
 
-const updateTest = async(req,res)=>{
-    try{
-        const {id} = req.params;
-        if(!require("mongoose").Types.ObjectId.isValid(id)){
-            return responseHandler(res, StatusCodes.BAD_REQUEST, "Invalid test ID");
-        }
-        const validation = validateTestData(req.body);
-        if(!validation.isValid){    
-            return responseHandler(res, StatusCodes.BAD_REQUEST, "Validation failed", null, {errors: validation.errors});
-        }
-        const {name,category} = req.body;
-        if(category){
-            const categoryExists = await Category.findById(category);
 
-            if(!categoryExists){
-                return responseHandler(res, StatusCodes.NOT_FOUND, "Category not found");
-            }
-            const updateData = { ...req.body };
-            if(name){
-                updateData.slug = generateTestSlug(name);
-                updateData.name = name.trim();
-            }
-            const test = await Test.findByIdAndUpdate(id,updateData,{new:true,runValidators:true}).populate("category","name");
-            if(!test){
-                return responseHandler(res, StatusCodes.NOT_FOUND, "Test not found");
-            }
-            return responseHandler(res, StatusCodes.SUCCESS, "Test updated successfully", test);
+const updateTest = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const mongoose = require("mongoose");
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid test ID");
         }
-    }catch(error){
-         console.error("Update test error:", error);
 
-         if (error.code === 11000){
-            return responseHandler(res, StatusCodes.CONFLICT, "Test name already exists");
-         }
+        const existingTest = await Test.findById(id);
 
-         return responseHandler(res, StatusCodes.SERVER_ERROR, "Internal server error");
+        if (!existingTest) {
+            return responseHandler(res,StatusCodes.NOT_FOUND,"Test not found");
+        }
+
+        if (Object.keys(req.body).length === 0) {
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"No update data provided");
+        }
+
+        const updatedData = {
+            ...existingTest.toObject(),
+            ...req.body
+        };
+
+        const validation = validateTestData(updatedData);
+
+        if (!validation.isValid) {
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors: validation.errors });
+        }
+
+        if (req.body.category) {
+            if (!mongoose.Types.ObjectId.isValid(req.body.category)) {
+                return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid category ID");
+            }
+
+            const categoryExists = await Category.findById(req.body.category);
+
+            if (!categoryExists) {
+                return responseHandler(res,StatusCodes.NOT_FOUND,"Category not found");
+            }
+        }
+
+        const updateData = { ...req.body };
+
+        if (req.body.name) {
+            updateData.name = req.body.name.trim();
+            updateData.slug = generateTestSlug(req.body.name);
+        }
+
+        const test = await Test.findByIdAndUpdate(
+            id,
+            updateData,
+            {
+                new: true,
+                runValidators: true
+            }
+        ).populate("category", "name");
+
+        return responseHandler(res,StatusCodes.SUCCESS,"Test updated successfully",test);
+
+    } catch (error) {
+        console.error("Update test error:", error);
+
+        if (error.code === 11000) {
+            return responseHandler(res,StatusCodes.CONFLICT,"Test name already exists");
+        }
+
+        return responseHandler(res,StatusCodes.SERVER_ERROR,"Internal server error"
+        );
     }
 };
+
 
 const deleteTest = async(req,res)=>{
     try{
@@ -200,17 +235,7 @@ const importTestsFromCSV = async (req, res) => {
             );
         }
 
-        const requiredColumns = [
-            "name",
-            "description",
-            "categoryId",
-            "sampleType",
-            "preparationInstructions",
-            "turnaroundTime",
-            "price",
-            "priceStatus",
-            "isActive"
-        ];
+        const requiredColumns = ["name","description","categoryId","sampleType","preparationInstructions","turnaroundTime","price","priceStatus","isActive"];
 
         const missingColumns = requiredColumns.filter(
             (column) => !Object.keys(rows[0]).includes(column)
