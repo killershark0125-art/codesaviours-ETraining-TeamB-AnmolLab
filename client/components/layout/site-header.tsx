@@ -1,17 +1,17 @@
-
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { siteConfig } from "@/lib/site";
 
 const navigation = [
-  { label: "About", href: "#about" },
-  { label: "Tests", href: "#tests" },
-  { label: "Packages", href: "#packages" },
-  { label: "Home Sampling", href: "#home-sampling" },
-  { label: "Branches", href: "#branches" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Tests", href: "/#tests" },
+  { label: "Packages", href: "/#packages" },
+  { label: "Home Sampling", href: "/#home-sampling" },
+  { label: "Branches", href: "/#branches" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function SiteHeader() {
@@ -28,8 +28,7 @@ export default function SiteHeader() {
   return (
     <header className="glass-site-header">
       <div className="container glass-nav-inner">
-        {/* Brand */}
-        <a
+        <Link
           href="/"
           className="brand-lockup"
           aria-label="Anmol Health Care Lab homepage"
@@ -43,36 +42,26 @@ export default function SiteHeader() {
             priority
             className="brand-logo-image"
           />
-        </a>
+        </Link>
 
-        {/* Desktop navigation */}
-        <nav
-          className="glass-nav-links"
-          aria-label="Main navigation"
-        >
+        <nav className="glass-nav-links" aria-label="Main navigation">
           {navigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={closeMenu}
-            >
+            <Link key={item.href} href={item.href} onClick={closeMenu}>
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
-        {/* Desktop actions */}
         <div className="glass-nav-actions">
-          <a href="#tests" className="nav-book-button">
+          {/* Point these at /book once that route exists */}
+          <Link href="/#tests" className="nav-book-button">
             Book a Test
-          </a>
-
-          <a href="#reports" className="nav-report-button">
+          </Link>
+          <Link href="/reports" className="nav-report-button">
             Download Report
-          </a>
+          </Link>
         </div>
 
-        {/* Mobile menu trigger */}
         <button
           type="button"
           className="glass-nav-toggle"
@@ -81,56 +70,28 @@ export default function SiteHeader() {
           aria-controls="mobile-navigation"
           onClick={() => setMenuOpen((current) => !current)}
         >
-          <span
-            className={
-              menuOpen ? "menu-line menu-line-open" : "menu-line"
-            }
-          />
-          <span
-            className={
-              menuOpen ? "menu-line menu-line-open" : "menu-line"
-            }
-          />
+          <span className={menuOpen ? "menu-line menu-line-open" : "menu-line"} />
+          <span className={menuOpen ? "menu-line menu-line-open" : "menu-line"} />
         </button>
       </div>
 
-      {/* Mobile navigation */}
       {menuOpen && (
-        <div
-          id="mobile-navigation"
-          className="glass-mobile-panel"
-        >
-          <nav
-            className="container glass-mobile-links"
-            aria-label="Mobile navigation"
-          >
+        <div id="mobile-navigation" className="glass-mobile-panel">
+          <nav className="container glass-mobile-links" aria-label="Mobile navigation">
             {navigation.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={closeMenu}
-              >
+              <Link key={item.href} href={item.href} onClick={closeMenu}>
                 {item.label}
                 <span aria-hidden="true">↗</span>
-              </a>
+              </Link>
             ))}
 
             <div className="glass-mobile-actions">
-              <a
-                href="#tests"
-                className="nav-book-button"
-                onClick={closeMenu}
-              >
+              <Link href="/#tests" className="nav-book-button" onClick={closeMenu}>
                 Book a Test
-              </a>
-
-              <a
-                href="#reports"
-                className="nav-report-button"
-                onClick={closeMenu}
-              >
+              </Link>
+              <Link href="/reports" className="nav-report-button" onClick={closeMenu}>
                 Download Report
-              </a>
+              </Link>
             </div>
 
             {whatsappUrl && (

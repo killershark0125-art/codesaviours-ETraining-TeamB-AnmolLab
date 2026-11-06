@@ -1,6 +1,21 @@
-
 import type { Metadata } from "next";
+import { Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+// Manrope is a variable font: one file covers every weight used in the CSS.
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Anmol Health Care Lab",
@@ -14,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${instrumentSerif.variable} ${manrope.variable}`}>
       <body>{children}</body>
     </html>
   );
