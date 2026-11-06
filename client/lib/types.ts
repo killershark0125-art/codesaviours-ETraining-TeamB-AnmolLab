@@ -1,10 +1,13 @@
 /**
- * Shapes shared between the UI and the API layer. The API contract these
- * mirror is documented in lib/api/README.md and must be agreed with the
- * backend before the endpoints go live.
+ * Shapes shared between the UI and the API layer.
  */
 
 export type DataSource = "api" | "sample";
+
+export type CategoryOption = {
+  id: string;
+  name: string;
+};
 
 export type TestSummary = {
   id: string;
@@ -12,20 +15,31 @@ export type TestSummary = {
   name: string;
   code: string | null;
   category: string;
-  /** PKR. null until the laboratory confirms a price. */
+  /** PKR. Only populated when the laboratory has confirmed the price. */
   price: number | null;
+  priceStatus?: "pending" | "confirmed";
 };
 
 export type TestSearchParams = {
   query: string;
+  /** MongoDB category ID for the API; category name for sample data. */
   category: string | null;
+  page?: number;
   limit?: number;
+};
+
+export type TestPagination = {
+  totalTests: number;
+  currentPage: number;
+  totalPages: number;
+  limit: number;
 };
 
 export type TestSearchResult = {
   items: TestSummary[];
   total: number;
   categories: string[];
+  pagination: TestPagination;
   source: DataSource;
 };
 
@@ -34,7 +48,7 @@ export type HealthPackage = {
   slug: string;
   name: string;
   includedTests: string[];
-  /** PKR. null until the laboratory confirms a price. */
+  /** PKR. null until the laboratory confirms it. */
   regularPrice: number | null;
   packagePrice: number | null;
 };

@@ -41,7 +41,7 @@ export default function TestFinder() {
           aria-describedby={hintId}
         >
           <label className="test-finder__sr-only" htmlFor={inputId}>
-            Search diagnostic tests by name or code
+           Search diagnostic tests by name
           </label>
 
           <span className="test-finder__search-icon" aria-hidden="true">
@@ -58,7 +58,7 @@ export default function TestFinder() {
             value={search.input}
             maxLength={80}
             autoComplete="off"
-            placeholder="Enter a test name or code"
+            placeholder="Enter a test name"
             onChange={(event) => search.updateInput(event.target.value)}
             aria-describedby={hintId}
           />
@@ -86,7 +86,7 @@ export default function TestFinder() {
         </form>
 
         <p className="test-finder__hint" id={hintId}>
-          Search by test name or code. Examples: CBC, HbA1c, Thyroid Profile.
+          Search by test name. Examples: CBC, HbA1c, Thyroid Profile.
         </p>
 
         <div
@@ -133,14 +133,14 @@ export default function TestFinder() {
                     : "Preview matches"}
                 </span>
 
-                <span>{search.result.items.length} found</span>
+                <span>{search.result.total} found</span>
               </div>
 
               {search.result.items.length === 0 ? (
                 <div className="test-finder__empty">
                   <strong>No matching tests found</strong>
                   <p>
-                    Check the spelling or try a shorter test name or code.
+                    Check the spelling or try a another test name
                   </p>
                 </div>
               ) : (
