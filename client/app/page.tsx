@@ -1,69 +1,355 @@
-import Image from "next/image";
+
+import SiteHeader from "@/components/layout/site-header";
+import CellularBackground from "@/components/home/cellular-background";
+import TestFinder from "@/components/home/test-finder";
+import BrandInfoTicker from "@/components/home/brand-info-ticker";
+import { siteConfig } from "@/lib/site";
 
 export default function Home() {
+  const whatsappUrl = siteConfig.whatsappNumber
+    ? `https://wa.me/${siteConfig.whatsappNumber}`
+    : null;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      <SiteHeader />
+
+      <main>
+        {/* FULL-SCREEN EDITORIAL HERO */}
+        <section
+          id="home"
+          className="cinema-hero"
+          aria-labelledby="cinema-hero-title"
+        >
+          <CellularBackground />
+
+          <div className="cinema-hero-shade" aria-hidden="true" />
+
+          <div className="container cinema-hero-inner">
+            <div className="cinema-hero-copy">
+              <div className="cinema-hero-brand" role="group" aria-label="Anmol Health Care Lab">
+                <span className="cinema-hero-brand-name">ANMOL</span>
+                <span className="cinema-hero-brand-subtitle">HEALTH CARE LAB</span>
+              </div>
+
+              <h1 id="cinema-hero-title" className="cinema-hero-title">
+                Detailed diagnostics.
+              </h1>
+
+              <p className="cinema-hero-subtitle">
+                A clearer view of your health.
+              </p>
+            </div>
+
+            <div className="cinema-hero-bottom">
+              <div className="cinema-hero-actions">
+                <a href="#tests" className="hero-action-primary">
+                  Book a Test
+                </a>
+
+                <a href="#reports" className="hero-action-secondary">
+                  Download Report
+                </a>
+              </div>
+
+              <a href="#about" className="cinema-hero-explore">
+                Explore the lab
+              </a>
+            </div>            
+          </div>
+        </section>
+
+        <BrandInfoTicker />
+
+        {/* TEST SEARCH — SEPARATE FROM HERO */}
+        <section id="tests" className="catalogue-search-section">
+          <div className="container catalogue-search-layout">
+
+            <div className="catalogue-search-intro">
+              <span className="section-number">
+                01 / TEST CATALOGUE
+              </span>
+
+<h2 className="catalogue-search-title">
+  Find a test.
+</h2>
+
+<p>
+  Enter the test name or short code from your prescription.
+</p>
+            </div>
+
+            <div className="catalogue-search">
+              <TestFinder />
+            </div>
+          </div>
+        </section>
+
+        {/* ABOUT */}
+        <section id="about" className="editorial-section">
+          <div className="container section-intro">
+            <div>
+              <span className="section-number">
+                02 / ABOUT THE LAB
+              </span>
+            </div>
+
+            <div>
+              <h2 className="section-heading">
+                Clarity is part of <em>care.</em>
+              </h2>
+
+              <p className="section-copy">
+                Anmol Health Care Lab is based in Faisalabad,
+                Pakistan. This website brings laboratory information,
+                diagnostic test discovery and patient resources
+                together in one place.
+              </p>
+
+              <p className="section-copy">
+                Explore the information currently available and
+                contact the laboratory directly to confirm
+                test availability and service arrangements.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* HOW IT WORKS */}
+        <section id="how-it-works" className="process-section">
+          <div className="container">
+            <span className="section-number">
+              03 / PATIENT GUIDE
+            </span>
+
+            <h2 className="process-heading">
+              A straightforward place to begin.
+            </h2>
+
+            <div className="process-list">
+              <article className="process-item">
+                <span className="process-number">01</span>
+                <h3>Find your test</h3>
+                <p>
+                  Explore available tests and their verified
+                  laboratory information.
+                </p>
+              </article>
+
+              <article className="process-item">
+                <span className="process-number">02</span>
+                <h3>Confirm the details</h3>
+                <p>
+                  Contact the laboratory to confirm availability,
+                  preparation instructions and pricing.
+                </p>
+              </article>
+
+              <article className="process-item">
+                <span className="process-number">03</span>
+                <h3>Connect with the lab</h3>
+                <p>
+                  Discuss the next steps and service arrangements
+                  directly with the laboratory.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* PACKAGES */}
+        <section id="packages" className="packages-section container">
+          <div>
+            <span className="section-number">
+              04 / HEALTH PACKAGES
+            </span>
+          </div>
+
+          <div className="packages-copy">
+            <h2 className="section-heading">
+              A considered approach to
+              <em> preventive health.</em>
+            </h2>
+
+            <div className="packages-note">
+              The laboratory&apos;s official package names, included
+              tests and prices are awaiting confirmation.
+              Verified information will be published here.
+            </div>
+          </div>
+        </section>
+
+        {/* HOME SAMPLING */}
+        <section
+          id="home-sampling"
+          className="home-sampling-section"
+        >
+          <div className="container section-intro">
+            <div>
+              <span className="section-number">
+                05 / HOME SAMPLING
+              </span>
+            </div>
+
+            <div>
+              <h2 className="section-heading">
+                Laboratory information,
+                <em> made accessible.</em>
+              </h2>
+
+              <p className="section-copy">
+                Home sample collection availability, coverage
+                areas and additional charges are awaiting
+                confirmation from the laboratory.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* BRANCHES */}
+        <section id="branches" className="branches-section">
+          <div className="container branches-layout">
+            <div>
+              <span className="section-number">
+                06 / OUR LOCATION
+              </span>
+
+              <h2 className="section-heading">
+                Find your way to <em>Anmol Lab.</em>
+              </h2>
+            </div>
+
+            <div className="branch-information">
+              <span>CLIENT-PROVIDED ADDRESS</span>
+
+              <h3>{siteConfig.address}</h3>
+
+              <p>
+                The official map pin, operating hours and
+                additional branch details are awaiting
+                confirmation.
+              </p>
+
+              <a
+                href={siteConfig.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link"
+              >
+                Search this address on Maps ↗
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* REPORTS */}
+        <section id="reports" className="report-section">
+          <div className="container report-layout">
+            <div>
+              <span className="eyebrow">
+                07 / PATIENT REPORTS
+              </span>
+
+              <h2 className="report-title">
+                Your reports.
+                <br />
+                Your information.
+              </h2>
+
+              <p className="report-description">
+                Online report access and verification are part
+                of the planned patient experience.
+              </p>
+            </div>
+
+            <div className="report-side-note">
+              The online report download workflow is not
+              available yet. Please contact the laboratory
+              directly for information about obtaining reports.
+            </div>
+          </div>
+        </section>
+
+        {/* CONTACT */}
+        <section id="contact" className="contact-section container">
+          <div>
+            <span className="section-number">
+              08 / GET IN TOUCH
+            </span>
+
+            <h2 className="section-heading">
+              Start a conversation with <em>Anmol Lab.</em>
+            </h2>
+          </div>
+
+          <div className="contact-details">
+            <div className="contact-detail">
+              <span>Telephone</span>
+
+              {siteConfig.phones.map((phone) => (
+                <a href={phone.href} key={phone.href}>
+                  {phone.display}
+                </a>
+              ))}
+            </div>
+
+            <div className="contact-detail">
+              <span>Email</span>
+
+              <a href={`mailto:${siteConfig.email}`}>
+                {siteConfig.email}
+              </a>
+            </div>
+
+            <div className="contact-detail">
+              <span>Address</span>
+
+              <strong>{siteConfig.address}</strong>
+            </div>
+
+            <div className="contact-detail">
+              <span>Laboratory directions</span>
+
+              <a
+                href={siteConfig.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Find the location ↗
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
-    </div>
+
+      {/* Only enabled once the laboratory confirms its WhatsApp number */}
+      {whatsappUrl && (
+        <a
+          href={whatsappUrl}
+          className="whatsapp-quick-action"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contact Anmol Lab on WhatsApp"
+        >
+          WhatsApp <span aria-hidden="true">↗</span>
+        </a>
+      )}
+
+      <footer className="site-footer">
+        <div className="container footer-inner">
+          <span className="footer-brand">
+            ANMOL HEALTH CARE LAB
+          </span>
+
+          <span className="footer-muted">
+            {siteConfig.tagline}
+          </span>
+
+          <span className="footer-muted">
+            © 2026 Anmol Lab
+          </span>
+        </div>
+      </footer>
+    </>
   );
 }
