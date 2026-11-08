@@ -51,11 +51,13 @@ const getAllTests = async(req,res)=>{
          const limitNumber = Math.min(100,Math.max(1, parseInt(limit, 10) || 10));
          const filter = {};
          if (search && search.trim()) {
-            filter.name = {
-                $regex: search.trim(),
-                $options: "i"
-            };
-        };
+
+         const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+               filter.$or = [
+                   { name: { $regex: escapedSearch, $options: "i" } },
+                   { code: { $regex: escapedSearch, $options: "i" } }
+                            ];
+               };
         if (category) {
             if (!require("mongoose").Types.ObjectId.isValid(category)) {
                 return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid category ID");
