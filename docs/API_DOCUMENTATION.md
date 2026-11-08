@@ -160,7 +160,7 @@ Supported query parameters:
 
 | Parameter | Description |
 |---|---|
-| `search` | Search tests by name |
+| `search` | Case-insensitive search across test name and test code |
 | `category` | Filter by category ID |
 | `isActive` | Filter using `true` or `false` |
 | `page` | Page number; default is 1 |
@@ -169,7 +169,9 @@ Supported query parameters:
 Example:
 
 ```text
-GET /api/tests/getAllTests?search=blood&page=1&limit=10
+GET /api/tests/getAllTests?search=blood
+GET /api/tests/getAllTests?search=LAB001
+GET /api/tests/getAllTests?search=lab001
 ```
 
 The response includes test records and pagination information.
