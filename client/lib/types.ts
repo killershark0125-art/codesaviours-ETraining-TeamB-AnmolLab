@@ -1,8 +1,4 @@
-/**
- * Shapes shared between the UI and the API layer.
- */
-
-export type DataSource = "api" | "sample";
+export type DataSource = "api";
 
 export type CategoryOption = {
   id: string;
@@ -15,14 +11,12 @@ export type TestSummary = {
   name: string;
   code: string | null;
   category: string;
-  /** PKR. Only populated when the laboratory has confirmed the price. */
   price: number | null;
-  priceStatus?: "pending" | "confirmed";
+  priceStatus: "pending" | "confirmed";
 };
 
 export type TestSearchParams = {
   query: string;
-  /** MongoDB category ID for the API; category name for sample data. */
   category: string | null;
   page?: number;
   limit?: number;
@@ -43,17 +37,40 @@ export type TestSearchResult = {
   source: DataSource;
 };
 
+export type PackageTestSummary = {
+  id: string;
+  name: string;
+  slug: string;
+  price: number | null;
+  priceStatus: "pending" | "confirmed";
+};
+
 export type HealthPackage = {
   id: string;
   slug: string;
   name: string;
-  includedTests: string[];
-  /** PKR. null until the laboratory confirms it. */
-  regularPrice: number | null;
+  description: string;
+  includedTests: PackageTestSummary[];
+  discountPercentage: number;
+  originalPrice: number | null;
   packagePrice: number | null;
+  savings: number | null;
+  isActive: boolean;
 };
 
 export type HealthPackagesResult = {
   items: HealthPackage[];
   source: DataSource;
+};
+
+export type Branch = {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  phone: string;
+  timings: string;
+  mapEmbedUrl: string | null;
+  directionsUrl: string | null;
+  isActive: boolean;
 };
