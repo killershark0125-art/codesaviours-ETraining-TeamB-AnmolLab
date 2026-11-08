@@ -1,6 +1,6 @@
 
 .section {
-  padding-block: clamp(75px, 9vw, 110px);
+  padding-block: clamp(85px, 9vw, 120px);
   background: #ffffff;
 }
 
@@ -12,17 +12,53 @@
   margin-bottom: 48px;
 }
 
+.sectionNumber {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #626879;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.16em;
+  line-height: 1.6;
+}
+
+.sectionNumber::before {
+  width: 26px;
+  height: 1px;
+  flex: 0 0 auto;
+  background: currentColor;
+  content: "";
+}
+
+.headingTitle {
+  max-width: 750px;
+  margin: 21px 0 0;
+  color: #22285c;
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: clamp(44px, 5.5vw, 70px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.headingTitle em {
+  color: #7784a7;
+  font-weight: 400;
+}
+
 .intro {
   max-width: 430px;
   margin: 0 0 5px;
-  color: #7d7e80;
-  font-size: 14px;
-  line-height: 1.85;
+  color: #626879;
+  font-size: 13px;
+  line-height: 1.9;
 }
 
 .branchGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   gap: 20px;
 }
 
@@ -83,7 +119,7 @@
 .detailLabel,
 .stateEyebrow {
   display: block;
-  color: #90929b;
+  color: #858995;
   font-size: 9px;
   font-weight: 750;
   letter-spacing: 0.15em;
@@ -134,10 +170,10 @@
 
 .cardFooter {
   display: flex;
+  min-height: 50px;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 50px;
   border-top: 1px solid rgba(34, 40, 92, 0.1);
 }
 
@@ -205,7 +241,7 @@
 .state p {
   max-width: 450px;
   margin: 10px 0 0;
-  color: #7d7e80;
+  color: #626879;
   font-size: 12px;
   line-height: 1.8;
 }

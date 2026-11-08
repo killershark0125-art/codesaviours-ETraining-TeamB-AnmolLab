@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import type { Branch } from "@/lib/types";
 import { getBranches } from "@/lib/api/branches";
 
@@ -38,9 +39,7 @@ export default function BranchDirectory() {
         setStatus("error");
       });
 
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [attempt]);
 
   function retry() {
@@ -50,7 +49,8 @@ export default function BranchDirectory() {
   }
 
   function getPhoneHref(phone: string) {
-    return `tel:${phone.replace(/[^\d+]/g, "")}`;
+    const sanitizedPhone = phone.replace(/[^\d+]/g, "");
+    return `tel:${sanitizedPhone}`;
   }
 
   return (
@@ -62,13 +62,13 @@ export default function BranchDirectory() {
       <div className="container">
         <div className={styles.heading}>
           <div>
-            <span className="section-number">
+            <span className={styles.sectionNumber}>
               06 / OUR LOCATIONS
             </span>
 
             <h2
               id="branches-title"
-              className="section-heading"
+              className={styles.headingTitle}
             >
               Find your way to <em>Anmol Lab.</em>
             </h2>

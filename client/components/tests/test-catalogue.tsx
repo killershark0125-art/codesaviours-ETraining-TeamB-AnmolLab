@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useId, type FormEvent } from "react";
 
+import CellularBackground from "@/components/home/cellular-background";
 import { RESULT_LIMIT } from "@/lib/api/tests";
 import { formatPrice } from "@/lib/format";
 import { useTestSearch } from "@/lib/hooks/use-test-search";
@@ -51,33 +52,34 @@ export default function TestCatalogue({
 
   return (
     <div className={styles.page}>
-      {/* Catalogue hero */}
       <section
         className={styles.hero}
         aria-labelledby="catalogue-title"
       >
+        <CellularBackground />
+
+        <div
+          className={styles.heroShade}
+          aria-hidden="true"
+        />
+
         <div className={styles.heroInner}>
           <div className={styles.breadcrumb}>
             <Link href="/">Home</Link>
-
             <span aria-hidden="true">/</span>
-
             <span>Test catalogue</span>
           </div>
 
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>
               DIAGNOSTIC CATALOGUE
-
               <span className={styles.eyebrowLine} />
-
               TEST DIRECTORY
             </span>
 
             <h1 id="catalogue-title">
               Find the test.
               <br />
-
               <em>Know what comes next.</em>
             </h1>
 
@@ -86,17 +88,24 @@ export default function TestCatalogue({
               Confirm availability, preparation instructions and pricing
               directly with the laboratory before your visit.
             </p>
+
+            <Link
+              href="#catalogue-results-title"
+              className={styles.heroAction}
+            >
+              Explore the catalogue
+              <span aria-hidden="true">↓</span>
+            </Link>
           </div>
 
           <div className={styles.heroFoot}>
             <span>TEST DISCOVERY</span>
-
             <span>LABORATORY INFORMATION</span>
+            <span>EXPLORE MORE ↓</span>
           </div>
         </div>
       </section>
 
-      {/* Catalogue content */}
       <section
         className={styles.catalogueSection}
         aria-labelledby="catalogue-results-title"
@@ -119,7 +128,6 @@ export default function TestCatalogue({
             </p>
           </div>
 
-          {/* Search and category filters */}
           <div className={styles.filterPanel}>
             <form
               className={styles.searchForm}
@@ -180,7 +188,6 @@ export default function TestCatalogue({
                 disabled={isLoading}
               >
                 {isLoading ? "Searching..." : "Search"}
-
                 <span aria-hidden="true">↗</span>
               </button>
             </form>
@@ -225,7 +232,6 @@ export default function TestCatalogue({
                   onClick={handleReset}
                 >
                   Reset filters
-
                   <span aria-hidden="true">×</span>
                 </button>
               )}
@@ -242,7 +248,6 @@ export default function TestCatalogue({
             )}
           </div>
 
-          {/* Result summary */}
           <div className={styles.resultsBar}>
             <div>
               <span className={styles.resultsEyebrow}>
@@ -267,7 +272,6 @@ export default function TestCatalogue({
             </span>
           </div>
 
-          {/* Result states and cards */}
           <div
             className={styles.resultsArea}
             aria-live="polite"
@@ -279,12 +283,8 @@ export default function TestCatalogue({
                   className={styles.spinner}
                   aria-hidden="true"
                 />
-
                 <strong>Loading the test catalogue</strong>
-
-                <p>
-                  Retrieving available laboratory tests.
-                </p>
+                <p>Retrieving available laboratory tests.</p>
               </div>
             )}
 
@@ -309,7 +309,6 @@ export default function TestCatalogue({
                   onClick={search.retry}
                 >
                   Try again
-
                   <span aria-hidden="true">↗</span>
                 </button>
               </div>
@@ -341,7 +340,6 @@ export default function TestCatalogue({
                       onClick={handleReset}
                     >
                       Clear filters
-
                       <span aria-hidden="true">↗</span>
                     </button>
                   )}
@@ -383,7 +381,6 @@ export default function TestCatalogue({
                           {test.code && (
                             <p className={styles.testCode}>
                               TEST CODE
-
                               <strong>{test.code}</strong>
                             </p>
                           )}
@@ -414,7 +411,6 @@ export default function TestCatalogue({
               )}
           </div>
 
-          {/* Backend pagination */}
           {result && totalPages > 1 && (
             <nav
               className={styles.pagination}
@@ -428,15 +424,12 @@ export default function TestCatalogue({
                 disabled={currentPage <= 1 || isLoading}
               >
                 <span aria-hidden="true">←</span>
-
                 Previous
               </button>
 
               <span>
                 <strong>{currentPage}</strong>
-
                 <span className={styles.pageDivider}>/</span>
-
                 {totalPages}
               </span>
 
@@ -448,7 +441,6 @@ export default function TestCatalogue({
                 disabled={currentPage >= totalPages || isLoading}
               >
                 Next
-
                 <span aria-hidden="true">→</span>
               </button>
             </nav>
@@ -458,9 +450,10 @@ export default function TestCatalogue({
             <span aria-hidden="true">i</span>
 
             <p>
-              Test availability, preparation requirements, sample details
-              and prices should be confirmed directly with the laboratory.
-              Do not use this catalogue as a substitute for medical advice.
+              Test availability, preparation requirements, sample
+              details and prices should be confirmed directly with
+              the laboratory. Do not use this catalogue as a
+              substitute for medical advice.
             </p>
           </div>
         </div>
