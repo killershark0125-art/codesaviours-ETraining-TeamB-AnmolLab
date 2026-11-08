@@ -51,8 +51,8 @@ const getAllTests = async(req,res)=>{
          const limitNumber = Math.min(100,Math.max(1, parseInt(limit, 10) || 10));
          const filter = {};
          if (search && search.trim()) {
-         const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+         const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
                filter.$or = [
                    { name: { $regex: escapedSearch, $options: "i" } },
                    { code: { $regex: escapedSearch, $options: "i" } }
