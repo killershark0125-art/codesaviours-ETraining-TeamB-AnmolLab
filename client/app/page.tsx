@@ -4,6 +4,7 @@ import CellularBackground from "@/components/home/cellular-background";
 import TestFinder from "@/components/home/test-finder";
 import BrandInfoTicker from "@/components/home/brand-info-ticker";
 import BranchDirectory from "@/components/home/branch-directory";
+import PackageDirectory from "@/components/packages/package-directory";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -159,26 +160,7 @@ export default function Home() {
         </section>
 
         {/* PACKAGES */}
-        <section id="packages" className="packages-section container">
-          <div>
-            <span className="section-number">
-              04 / HEALTH PACKAGES
-            </span>
-          </div>
-
-          <div className="packages-copy">
-            <h2 className="section-heading">
-              A considered approach to
-              <em> preventive health.</em>
-            </h2>
-
-            <div className="packages-note">
-              The laboratory&apos;s official package names, included
-              tests and prices are awaiting confirmation.
-              Verified information will be published here.
-            </div>
-          </div>
-        </section>
+<PackageDirectory variant="preview" />
 
         {/* HOME SAMPLING */}
         <section
