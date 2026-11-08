@@ -3,6 +3,7 @@ import SiteHeader from "@/components/layout/site-header";
 import CellularBackground from "@/components/home/cellular-background";
 import TestFinder from "@/components/home/test-finder";
 import BrandInfoTicker from "@/components/home/brand-info-ticker";
+import BranchDirectory from "@/components/home/branch-directory";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -207,40 +208,7 @@ export default function Home() {
         </section>
 
         {/* BRANCHES */}
-        <section id="branches" className="branches-section">
-          <div className="container branches-layout">
-            <div>
-              <span className="section-number">
-                06 / OUR LOCATION
-              </span>
-
-              <h2 className="section-heading">
-                Find your way to <em>Anmol Lab.</em>
-              </h2>
-            </div>
-
-            <div className="branch-information">
-              <span>CLIENT-PROVIDED ADDRESS</span>
-
-              <h3>{siteConfig.address}</h3>
-
-              <p>
-                The official map pin, operating hours and
-                additional branch details are awaiting
-                confirmation.
-              </p>
-
-              <a
-                href={siteConfig.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link"
-              >
-                Search this address on Maps ↗
-              </a>
-            </div>
-          </div>
-        </section>
+        <BranchDirectory />
 
         {/* REPORTS */}
         <section id="reports" className="report-section">
