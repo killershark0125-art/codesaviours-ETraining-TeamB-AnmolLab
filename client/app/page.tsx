@@ -5,6 +5,7 @@ import TestFinder from "@/components/home/test-finder";
 import BrandInfoTicker from "@/components/home/brand-info-ticker";
 import BranchDirectory from "@/components/home/branch-directory";
 import PackageDirectory from "@/components/packages/package-directory";
+import AboutLab from "@/components/home/about-lab";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -88,34 +89,7 @@ export default function Home() {
         </section>
 
         {/* ABOUT */}
-        <section id="about" className="editorial-section">
-          <div className="container section-intro">
-            <div>
-              <span className="section-number">
-                02 / ABOUT THE LAB
-              </span>
-            </div>
-
-            <div>
-              <h2 className="section-heading">
-                Clarity is part of <em>care.</em>
-              </h2>
-
-              <p className="section-copy">
-                Anmol Health Care Lab is based in Faisalabad,
-                Pakistan. This website brings laboratory information,
-                diagnostic test discovery and patient resources
-                together in one place.
-              </p>
-
-              <p className="section-copy">
-                Explore the information currently available and
-                contact the laboratory directly to confirm
-                test availability and service arrangements.
-              </p>
-            </div>
-          </div>
-        </section>
+<AboutLab />
 
         {/* HOW IT WORKS */}
         <section id="how-it-works" className="process-section">
