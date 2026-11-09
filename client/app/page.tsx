@@ -6,6 +6,7 @@ import BrandInfoTicker from "@/components/home/brand-info-ticker";
 import BranchDirectory from "@/components/home/branch-directory";
 import PackageDirectory from "@/components/packages/package-directory";
 import AboutLab from "@/components/home/about-lab";
+import PatientGuide from "@/components/home/patient-guide";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -92,46 +93,7 @@ export default function Home() {
 <AboutLab />
 
         {/* HOW IT WORKS */}
-        <section id="how-it-works" className="process-section">
-          <div className="container">
-            <span className="section-number">
-              03 / PATIENT GUIDE
-            </span>
-
-            <h2 className="process-heading">
-              A straightforward place to begin.
-            </h2>
-
-            <div className="process-list">
-              <article className="process-item">
-                <span className="process-number">01</span>
-                <h3>Find your test</h3>
-                <p>
-                  Explore available tests and their verified
-                  laboratory information.
-                </p>
-              </article>
-
-              <article className="process-item">
-                <span className="process-number">02</span>
-                <h3>Confirm the details</h3>
-                <p>
-                  Contact the laboratory to confirm availability,
-                  preparation instructions and pricing.
-                </p>
-              </article>
-
-              <article className="process-item">
-                <span className="process-number">03</span>
-                <h3>Connect with the lab</h3>
-                <p>
-                  Discuss the next steps and service arrangements
-                  directly with the laboratory.
-                </p>
-              </article>
-            </div>
-          </div>
-        </section>
+<PatientGuide />
 
         {/* PACKAGES */}
 <PackageDirectory variant="preview" />
