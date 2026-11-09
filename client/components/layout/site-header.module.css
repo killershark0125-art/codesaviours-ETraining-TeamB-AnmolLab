@@ -1,0 +1,70 @@
+
+/* Active desktop navigation bubble */
+
+:global(.glass-nav-links) .activeLink {
+  position: relative;
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  color: #22285c;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.92),
+      rgba(237, 244, 250, 0.67)
+    );
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  box-shadow:
+    0 4px 14px rgba(34, 40, 92, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(34, 40, 92, 0.05);
+  opacity: 1;
+  text-decoration: none;
+}
+
+:global(.glass-nav-links) .activeLink::after {
+  position: absolute;
+  top: 3px;
+  right: 15px;
+  left: 15px;
+  height: 1px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  content: "";
+}
+
+:global(.glass-nav-links) .activeLink:hover {
+  color: #22285c;
+  background: rgba(255, 255, 255, 0.97);
+  opacity: 1;
+  text-decoration: none;
+}
+
+/* Active mobile navigation bubble */
+
+:global(.glass-mobile-links) .activeMobileLink {
+  padding-inline: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  color: #22285c;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.94),
+      rgba(237, 244, 250, 0.78)
+    );
+  box-shadow:
+    0 3px 12px rgba(34, 40, 92, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Active header action */
+
+.activeAction {
+  outline: 2px solid rgba(255, 255, 255, 0.72);
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 5px rgba(34, 40, 92, 0.08),
+    0 7px 18px rgba(34, 40, 92, 0.18);
+}

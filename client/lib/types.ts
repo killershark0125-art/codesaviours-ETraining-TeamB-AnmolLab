@@ -1,10 +1,9 @@
-/**
- * Shapes shared between the UI and the API layer. The API contract these
- * mirror is documented in lib/api/README.md and must be agreed with the
- * backend before the endpoints go live.
- */
+export type DataSource = "api";
 
-export type DataSource = "api" | "sample";
+export type CategoryOption = {
+  id: string;
+  name: string;
+};
 
 export type TestSummary = {
   id: string;
@@ -12,34 +11,66 @@ export type TestSummary = {
   name: string;
   code: string | null;
   category: string;
-  /** PKR. null until the laboratory confirms a price. */
   price: number | null;
+  priceStatus: "pending" | "confirmed";
 };
 
 export type TestSearchParams = {
   query: string;
   category: string | null;
+  page?: number;
   limit?: number;
+};
+
+export type TestPagination = {
+  totalTests: number;
+  currentPage: number;
+  totalPages: number;
+  limit: number;
 };
 
 export type TestSearchResult = {
   items: TestSummary[];
   total: number;
   categories: string[];
+  pagination: TestPagination;
   source: DataSource;
+};
+
+export type PackageTestSummary = {
+  id: string;
+  name: string;
+  slug: string;
+  price: number | null;
+  priceStatus: "pending" | "confirmed";
 };
 
 export type HealthPackage = {
   id: string;
   slug: string;
   name: string;
-  includedTests: string[];
-  /** PKR. null until the laboratory confirms a price. */
-  regularPrice: number | null;
+  description: string;
+  includedTests: PackageTestSummary[];
+  discountPercentage: number;
+  originalPrice: number | null;
   packagePrice: number | null;
+  savings: number | null;
+  isActive: boolean;
 };
 
 export type HealthPackagesResult = {
   items: HealthPackage[];
   source: DataSource;
+};
+
+export type Branch = {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  phone: string;
+  timings: string;
+  mapEmbedUrl: string | null;
+  directionsUrl: string | null;
+  isActive: boolean;
 };

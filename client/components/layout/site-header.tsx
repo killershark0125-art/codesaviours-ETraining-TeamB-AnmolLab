@@ -2,34 +2,45 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { siteConfig } from "@/lib/site";
+
+import styles from "./site-header.module.css";
 
 const navigation = [
-  { label: "About", href: "#about" },
-  { label: "Tests", href: "#tests" },
-  { label: "Packages", href: "#packages" },
-  { label: "Home Sampling", href: "#home-sampling" },
-  { label: "Branches", href: "#branches" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Tests", href: "/tests" },
+  { label: "Packages", href: "/packages" },
+  { label: "Home Sampling", href: "/home-sampling" },
+  { label: "Branches", href: "/branches" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function SiteHeader() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   function closeMenu() {
     setMenuOpen(false);
   }
 
-  const whatsappUrl = siteConfig.whatsappNumber
-    ? `https://wa.me/${siteConfig.whatsappNumber}`
-    : null;
+  function isActive(href: string) {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  const isBookingPage = isActive("/book");
+  const isReportsPage = isActive("/reports");
 
   return (
     <header className="glass-site-header">
       <div className="container glass-nav-inner">
-        {/* Brand */}
-        <a
+        <Link
           href="/"
           className="brand-lockup"
           aria-label="Anmol Health Care Lab homepage"
@@ -43,7 +54,7 @@ export default function SiteHeader() {
             priority
             className="brand-logo-image"
           />
-        </a>
+        </Link>
 
         {/* Desktop navigation */}
         <nav
@@ -51,44 +62,71 @@ export default function SiteHeader() {
           aria-label="Main navigation"
         >
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
+              className={
+                isActive(item.href)
+                  ? styles.activeLink
+                  : undefined
+              }
+              aria-current={
+                isActive(item.href) ? "page" : undefined
+              }
               onClick={closeMenu}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         {/* Desktop actions */}
         <div className="glass-nav-actions">
-          <a href="#tests" className="nav-book-button">
+          <Link
+            href="/book"
+            className={`nav-book-button ${
+              isBookingPage ? styles.activeAction : ""
+            }`}
+            aria-current={isBookingPage ? "page" : undefined}
+          >
             Book a Test
-          </a>
+          </Link>
 
-          <a href="#reports" className="nav-report-button">
+          <Link
+            href="/reports"
+            className={`nav-report-button ${
+              isReportsPage ? styles.activeAction : ""
+            }`}
+            aria-current={isReportsPage ? "page" : undefined}
+          >
             Download Report
-          </a>
+          </Link>
         </div>
 
-        {/* Mobile menu trigger */}
+        {/* Mobile menu toggle */}
         <button
           type="button"
           className="glass-nav-toggle"
-          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+          aria-label={
+            menuOpen ? "Close navigation" : "Open navigation"
+          }
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
           onClick={() => setMenuOpen((current) => !current)}
         >
           <span
             className={
-              menuOpen ? "menu-line menu-line-open" : "menu-line"
+              menuOpen
+                ? "menu-line menu-line-open"
+                : "menu-line"
             }
           />
+
           <span
             className={
-              menuOpen ? "menu-line menu-line-open" : "menu-line"
+              menuOpen
+                ? "menu-line menu-line-open"
+                : "menu-line"
             }
           />
         </button>
@@ -105,45 +143,42 @@ export default function SiteHeader() {
             aria-label="Mobile navigation"
           >
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
+                className={
+                  isActive(item.href)
+                    ? styles.activeMobileLink
+                    : undefined
+                }
+                aria-current={
+                  isActive(item.href) ? "page" : undefined
+                }
                 onClick={closeMenu}
               >
                 {item.label}
+
                 <span aria-hidden="true">↗</span>
-              </a>
+              </Link>
             ))}
 
             <div className="glass-mobile-actions">
-              <a
-                href="#tests"
+              <Link
+                href="/book"
                 className="nav-book-button"
                 onClick={closeMenu}
               >
                 Book a Test
-              </a>
+              </Link>
 
-              <a
-                href="#reports"
+              <Link
+                href="/reports"
                 className="nav-report-button"
                 onClick={closeMenu}
               >
                 Download Report
-              </a>
+              </Link>
             </div>
-
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={closeMenu}
-              >
-                Contact on WhatsApp
-                <span aria-hidden="true">↗</span>
-              </a>
-            )}
           </nav>
         </div>
       )}

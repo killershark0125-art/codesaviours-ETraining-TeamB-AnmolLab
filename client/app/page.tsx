@@ -3,6 +3,8 @@ import SiteHeader from "@/components/layout/site-header";
 import CellularBackground from "@/components/home/cellular-background";
 import TestFinder from "@/components/home/test-finder";
 import BrandInfoTicker from "@/components/home/brand-info-ticker";
+import BranchDirectory from "@/components/home/branch-directory";
+import PackageDirectory from "@/components/packages/package-directory";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -75,7 +77,7 @@ export default function Home() {
 </h2>
 
 <p>
-  Enter the test name or short code from your prescription.
+  Search for a test by its name.
 </p>
             </div>
 
@@ -158,26 +160,7 @@ export default function Home() {
         </section>
 
         {/* PACKAGES */}
-        <section id="packages" className="packages-section container">
-          <div>
-            <span className="section-number">
-              04 / HEALTH PACKAGES
-            </span>
-          </div>
-
-          <div className="packages-copy">
-            <h2 className="section-heading">
-              A considered approach to
-              <em> preventive health.</em>
-            </h2>
-
-            <div className="packages-note">
-              The laboratory&apos;s official package names, included
-              tests and prices are awaiting confirmation.
-              Verified information will be published here.
-            </div>
-          </div>
-        </section>
+<PackageDirectory variant="preview" />
 
         {/* HOME SAMPLING */}
         <section
@@ -207,40 +190,7 @@ export default function Home() {
         </section>
 
         {/* BRANCHES */}
-        <section id="branches" className="branches-section">
-          <div className="container branches-layout">
-            <div>
-              <span className="section-number">
-                06 / OUR LOCATION
-              </span>
-
-              <h2 className="section-heading">
-                Find your way to <em>Anmol Lab.</em>
-              </h2>
-            </div>
-
-            <div className="branch-information">
-              <span>CLIENT-PROVIDED ADDRESS</span>
-
-              <h3>{siteConfig.address}</h3>
-
-              <p>
-                The official map pin, operating hours and
-                additional branch details are awaiting
-                confirmation.
-              </p>
-
-              <a
-                href={siteConfig.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link"
-              >
-                Search this address on Maps ↗
-              </a>
-            </div>
-          </div>
-        </section>
+        <BranchDirectory />
 
         {/* REPORTS */}
         <section id="reports" className="report-section">
