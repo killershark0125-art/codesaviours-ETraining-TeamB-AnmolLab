@@ -1,0 +1,263 @@
+
+.section {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(90px, 10vw, 135px);
+  color: #f5f5f0;
+  background: #20284f;
+}
+
+.container {
+  width: min(1240px, calc(100% - 10%));
+  margin-inline: auto;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(245, 245, 240, 0.15);
+  color: rgba(245, 245, 240, 0.58);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.header {
+  padding-block: clamp(55px, 7vw, 85px);
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 20px;
+  color: #a9c0b2;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.heading {
+  max-width: 780px;
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(54px, 6.5vw, 82px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.heading em {
+  color: #a9c0b2;
+  font-weight: 400;
+}
+
+/* Rounded dark glass cards */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  min-height: 225px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(190, 204, 225, 0.14);
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(13, 21, 52, 0.78),
+    rgba(28, 37, 76, 0.58)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 12px 35px rgba(7, 12, 34, 0.14);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition:
+    background 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease;
+}
+
+.step:hover {
+  transform: translateY(-4px);
+  border-color: rgba(169, 192, 178, 0.35);
+  background: linear-gradient(
+    145deg,
+    rgba(13, 21, 52, 0.9),
+    rgba(35, 48, 88, 0.76)
+  );
+}
+
+.stepNumber {
+  color: #a9c0b2;
+  font-family: var(--font-editorial);
+  font-size: 48px;
+  line-height: 1;
+}
+
+.stepContent {
+  margin-top: 35px;
+}
+
+.stepContent h3 {
+  margin: 0;
+  color: #f5f5f0;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.stepContent p {
+  max-width: 270px;
+  margin: 10px 0 0;
+  color: rgba(245, 245, 240, 0.64);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Centered dark glass button */
+
+.actionRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 45px;
+}
+
+.action {
+  display: inline-flex;
+  min-height: 49px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 29px;
+  border: 1px solid rgba(190, 204, 225, 0.22);
+  border-radius: 50px;
+  color: #f5f5f0;
+  background: rgba(13, 21, 52, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease;
+}
+
+.action:hover {
+  transform: translateY(-2px);
+  border-color: rgba(169, 192, 178, 0.42);
+  background: rgba(35, 48, 88, 0.85);
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .container {
+    width: 90%;
+  }
+
+  .steps {
+    gap: 12px;
+  }
+
+  .step {
+    min-height: 215px;
+    padding: 22px;
+    border-radius: 21px;
+  }
+
+  .stepContent h3 {
+    font-size: 18px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .section {
+    padding-block: 78px 85px;
+  }
+
+  .container {
+    width: calc(100% - 38px);
+  }
+
+  .meta {
+    font-size: 8px;
+    letter-spacing: 0.09em;
+  }
+
+  .header {
+    padding-block: 53px 35px;
+  }
+
+  .eyebrow {
+    margin-bottom: 18px;
+    font-size: 9px;
+  }
+
+  .heading {
+    font-size: clamp(48px, 12.8vw, 64px);
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .step {
+    min-height: 150px;
+    padding: 22px;
+    border-radius: 20px;
+  }
+
+  .stepNumber {
+    font-size: 39px;
+  }
+
+  .stepContent {
+    margin-top: 24px;
+  }
+
+  .stepContent h3 {
+    font-size: 18px;
+  }
+
+  .stepContent p {
+    max-width: 100%;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+
+  .actionRow {
+    margin-top: 30px;
+  }
+
+  .action {
+    min-height: 47px;
+    padding-inline: 25px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .action {
+    transition: none;
+  }
+
+  .step:hover,
+  .action:hover {
+    transform: none;
+  }
+}
