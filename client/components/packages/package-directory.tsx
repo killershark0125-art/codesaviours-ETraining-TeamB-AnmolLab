@@ -86,8 +86,8 @@ export default function PackageDirectory({
             </div>
 
             <p>
-              Explore the laboratory&apos;s currently available
-              health packages and their included diagnostic tests.
+              Explore the laboratory&apos;s available health
+              packages and discover the tests included in each.
             </p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function PackageDirectory({
             <div className={styles.heroFoot}>
               <span>ANMOL HEALTH CARE LAB</span>
               <span>DETAILED DIAGNOSTICS</span>
-              <span>DISCOVER MORE ↓</span>
+              <span>DISCOVER MORE</span>
             </div>
           </div>
         </div>
@@ -168,13 +168,12 @@ export default function PackageDirectory({
 
           {isPreview &&
             status === "success" &&
-            packages.length > 3 && (
+            packages.length > 0 && (
               <Link
                 href="/packages"
                 className={styles.viewAll}
               >
-                View all packages
-                <span aria-hidden="true">↗</span>
+                Explore all packages
               </Link>
             )}
         </div>
@@ -207,7 +206,6 @@ export default function PackageDirectory({
               onClick={retry}
             >
               Try again
-              <span aria-hidden="true">↗</span>
             </button>
           </div>
         )}
@@ -267,8 +265,12 @@ export default function PackageDirectory({
 
                     <div className={styles.includedHeading}>
                       <span>INCLUDED TESTS</span>
+
                       <span>
-                        {item.includedTests.length} tests
+                        {item.includedTests.length}{" "}
+                        {item.includedTests.length === 1
+                          ? "test"
+                          : "tests"}
                       </span>
                     </div>
 
@@ -278,7 +280,7 @@ export default function PackageDirectory({
                           .slice(0, 6)
                           .map((test) => (
                             <li key={test.id}>
-                              <span aria-hidden="true">+</span>
+                              <span aria-hidden="true" />
                               {test.name}
                             </li>
                           ))}
@@ -324,7 +326,6 @@ export default function PackageDirectory({
                   <div className={styles.cardFooter}>
                     <Link href="/tests">
                       Explore individual tests
-                      <span aria-hidden="true">↗</span>
                     </Link>
                   </div>
                 </article>
@@ -339,7 +340,6 @@ export default function PackageDirectory({
             <div className={styles.mobileViewAll}>
               <Link href="/packages">
                 Explore all packages
-                <span aria-hidden="true">↗</span>
               </Link>
             </div>
           )}
