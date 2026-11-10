@@ -7,6 +7,10 @@ import BranchDirectory from "@/components/home/branch-directory";
 import PackageDirectory from "@/components/packages/package-directory";
 import AboutLab from "@/components/home/about-lab";
 import PatientGuide from "@/components/home/patient-guide";
+import HomeSampling from "@/components/home/home-sampling";
+import PatientReports from "@/components/home/patient-reports";
+import GetInTouch from "@/components/home/get-in-touch";
+import SiteFooter from "@/components/layout/site-footer";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -99,113 +103,17 @@ export default function Home() {
 <PackageDirectory variant="preview" />
 
         {/* HOME SAMPLING */}
-        <section
-          id="home-sampling"
-          className="home-sampling-section"
-        >
-          <div className="container section-intro">
-            <div>
-              <span className="section-number">
-                05 / HOME SAMPLING
-              </span>
-            </div>
 
-            <div>
-              <h2 className="section-heading">
-                Laboratory information,
-                <em> made accessible.</em>
-              </h2>
-
-              <p className="section-copy">
-                Home sample collection availability, coverage
-                areas and additional charges are awaiting
-                confirmation from the laboratory.
-              </p>
-            </div>
-          </div>
-        </section>
+<HomeSampling />
 
         {/* BRANCHES */}
         <BranchDirectory />
 
         {/* REPORTS */}
-        <section id="reports" className="report-section">
-          <div className="container report-layout">
-            <div>
-              <span className="eyebrow">
-                07 / PATIENT REPORTS
-              </span>
-
-              <h2 className="report-title">
-                Your reports.
-                <br />
-                Your information.
-              </h2>
-
-              <p className="report-description">
-                Online report access and verification are part
-                of the planned patient experience.
-              </p>
-            </div>
-
-            <div className="report-side-note">
-              The online report download workflow is not
-              available yet. Please contact the laboratory
-              directly for information about obtaining reports.
-            </div>
-          </div>
-        </section>
+<PatientReports />
 
         {/* CONTACT */}
-        <section id="contact" className="contact-section container">
-          <div>
-            <span className="section-number">
-              08 / GET IN TOUCH
-            </span>
-
-            <h2 className="section-heading">
-              Start a conversation with <em>Anmol Lab.</em>
-            </h2>
-          </div>
-
-          <div className="contact-details">
-            <div className="contact-detail">
-              <span>Telephone</span>
-
-              {siteConfig.phones.map((phone) => (
-                <a href={phone.href} key={phone.href}>
-                  {phone.display}
-                </a>
-              ))}
-            </div>
-
-            <div className="contact-detail">
-              <span>Email</span>
-
-              <a href={`mailto:${siteConfig.email}`}>
-                {siteConfig.email}
-              </a>
-            </div>
-
-            <div className="contact-detail">
-              <span>Address</span>
-
-              <strong>{siteConfig.address}</strong>
-            </div>
-
-            <div className="contact-detail">
-              <span>Laboratory directions</span>
-
-              <a
-                href={siteConfig.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Find the location ↗
-              </a>
-            </div>
-          </div>
-        </section>
+      <GetInTouch />
       </main>
 
       {/* Only enabled once the laboratory confirms its WhatsApp number */}
@@ -221,21 +129,7 @@ export default function Home() {
         </a>
       )}
 
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <span className="footer-brand">
-            ANMOL HEALTH CARE LAB
-          </span>
-
-          <span className="footer-muted">
-            {siteConfig.tagline}
-          </span>
-
-          <span className="footer-muted">
-            © 2026 Anmol Lab
-          </span>
-        </div>
-      </footer>
+<SiteFooter />
     </>
   );
 }
