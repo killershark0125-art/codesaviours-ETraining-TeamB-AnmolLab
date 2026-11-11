@@ -1,0 +1,235 @@
+
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(105px, 12vw, 165px);
+  color: #22285c;
+  background: #f5f5f0;
+}
+
+/* Faded Anmol logo watermark */
+
+.section::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: url("/brand/microscope-icon.png");
+  background-repeat: no-repeat;
+  background-size: min(51vw, 650px) auto;
+  background-position: right 6% center;
+  filter: grayscale(1);
+  opacity: 0.085;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 24%,
+    #000 58%,
+    #000 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.15) 24%,
+    #000 58%,
+    #000 100%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  width: min(1240px, calc(100% - 10%));
+  margin-inline: auto;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: #747b8c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.content {
+  max-width: 760px;
+  padding-block: clamp(65px, 8vw, 105px) 0;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 25px;
+  color: #819d99;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+}
+
+.heading {
+  max-width: 760px;
+  margin: 0;
+  color: #22285c;
+  font-family: var(--font-editorial);
+  font-size: clamp(60px, 7.2vw, 94px);
+  font-weight: 400;
+  letter-spacing: -0.055em;
+  line-height: 1.04;
+}
+
+.heading em {
+  position: relative;
+  display: inline-block;
+  color: #819d99;
+  font-weight: 400;
+}
+
+.heading em::after {
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  left: 0;
+  height: 1px;
+  background: #819d99;
+  content: "";
+}
+
+.description {
+  display: grid;
+  max-width: 625px;
+  gap: 17px;
+  margin-top: 38px;
+}
+
+.description p {
+  margin: 0;
+  color: #687184;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+/* Centered glass button with navy text */
+
+.actionRow {
+  display: flex;
+  width: min(100%, 625px);
+  justify-content: center;
+  margin-top: 45px;
+}
+
+.action {
+  min-width: 230px;
+  justify-content: center;
+  gap: 13px;
+  color: #22285c;
+  text-align: center;
+}
+
+.action:global(.hero-action-secondary) {
+  color: #22285c;
+}
+
+.action:global(.hero-action-secondary):hover {
+  color: #22285c;
+}
+
+.action span:last-child {
+  color: inherit;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .section::before {
+    background-size: min(65vw, 560px) auto;
+    background-position: right -5% center;
+    opacity: 0.065;
+  }
+
+  .content {
+    max-width: 680px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .section {
+    padding-block: 85px 95px;
+  }
+
+  .section::before {
+    background-size: min(90vw, 390px) auto;
+    background-position: right -65px center;
+    opacity: 0.055;
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 15%,
+      rgba(0, 0, 0, 0.5) 48%,
+      #000 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 15%,
+      rgba(0, 0, 0, 0.5) 48%,
+      #000 100%
+    );
+  }
+
+  .container {
+    width: calc(100% - 42px);
+  }
+
+  .meta {
+    gap: 12px;
+    font-size: 8px;
+    letter-spacing: 0.09em;
+  }
+
+  .content {
+    padding-top: 75px;
+  }
+
+  .eyebrow {
+    margin-bottom: 21px;
+    font-size: 9px;
+  }
+
+  .heading {
+    font-size: clamp(53px, 13.5vw, 70px);
+    line-height: 1.06;
+  }
+
+  .heading em::after {
+    bottom: -5px;
+  }
+
+  .description {
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .description p {
+    font-size: 14px;
+    line-height: 1.85;
+  }
+
+  .actionRow {
+    margin-top: 38px;
+  }
+
+  .action {
+    min-width: 215px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action {
+    transition: none;
+  }
+}

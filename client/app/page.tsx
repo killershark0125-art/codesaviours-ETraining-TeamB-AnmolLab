@@ -5,6 +5,12 @@ import TestFinder from "@/components/home/test-finder";
 import BrandInfoTicker from "@/components/home/brand-info-ticker";
 import BranchDirectory from "@/components/home/branch-directory";
 import PackageDirectory from "@/components/packages/package-directory";
+import AboutLab from "@/components/home/about-lab";
+import PatientGuide from "@/components/home/patient-guide";
+import HomeSampling from "@/components/home/home-sampling";
+import PatientReports from "@/components/home/patient-reports";
+import GetInTouch from "@/components/home/get-in-touch";
+import SiteFooter from "@/components/layout/site-footer";
 import { siteConfig } from "@/lib/site";
 
 export default function Home() {
@@ -88,188 +94,26 @@ export default function Home() {
         </section>
 
         {/* ABOUT */}
-        <section id="about" className="editorial-section">
-          <div className="container section-intro">
-            <div>
-              <span className="section-number">
-                02 / ABOUT THE LAB
-              </span>
-            </div>
-
-            <div>
-              <h2 className="section-heading">
-                Clarity is part of <em>care.</em>
-              </h2>
-
-              <p className="section-copy">
-                Anmol Health Care Lab is based in Faisalabad,
-                Pakistan. This website brings laboratory information,
-                diagnostic test discovery and patient resources
-                together in one place.
-              </p>
-
-              <p className="section-copy">
-                Explore the information currently available and
-                contact the laboratory directly to confirm
-                test availability and service arrangements.
-              </p>
-            </div>
-          </div>
-        </section>
+<AboutLab />
 
         {/* HOW IT WORKS */}
-        <section id="how-it-works" className="process-section">
-          <div className="container">
-            <span className="section-number">
-              03 / PATIENT GUIDE
-            </span>
-
-            <h2 className="process-heading">
-              A straightforward place to begin.
-            </h2>
-
-            <div className="process-list">
-              <article className="process-item">
-                <span className="process-number">01</span>
-                <h3>Find your test</h3>
-                <p>
-                  Explore available tests and their verified
-                  laboratory information.
-                </p>
-              </article>
-
-              <article className="process-item">
-                <span className="process-number">02</span>
-                <h3>Confirm the details</h3>
-                <p>
-                  Contact the laboratory to confirm availability,
-                  preparation instructions and pricing.
-                </p>
-              </article>
-
-              <article className="process-item">
-                <span className="process-number">03</span>
-                <h3>Connect with the lab</h3>
-                <p>
-                  Discuss the next steps and service arrangements
-                  directly with the laboratory.
-                </p>
-              </article>
-            </div>
-          </div>
-        </section>
+<PatientGuide />
 
         {/* PACKAGES */}
 <PackageDirectory variant="preview" />
 
         {/* HOME SAMPLING */}
-        <section
-          id="home-sampling"
-          className="home-sampling-section"
-        >
-          <div className="container section-intro">
-            <div>
-              <span className="section-number">
-                05 / HOME SAMPLING
-              </span>
-            </div>
 
-            <div>
-              <h2 className="section-heading">
-                Laboratory information,
-                <em> made accessible.</em>
-              </h2>
-
-              <p className="section-copy">
-                Home sample collection availability, coverage
-                areas and additional charges are awaiting
-                confirmation from the laboratory.
-              </p>
-            </div>
-          </div>
-        </section>
+<HomeSampling />
 
         {/* BRANCHES */}
         <BranchDirectory />
 
         {/* REPORTS */}
-        <section id="reports" className="report-section">
-          <div className="container report-layout">
-            <div>
-              <span className="eyebrow">
-                07 / PATIENT REPORTS
-              </span>
-
-              <h2 className="report-title">
-                Your reports.
-                <br />
-                Your information.
-              </h2>
-
-              <p className="report-description">
-                Online report access and verification are part
-                of the planned patient experience.
-              </p>
-            </div>
-
-            <div className="report-side-note">
-              The online report download workflow is not
-              available yet. Please contact the laboratory
-              directly for information about obtaining reports.
-            </div>
-          </div>
-        </section>
+<PatientReports />
 
         {/* CONTACT */}
-        <section id="contact" className="contact-section container">
-          <div>
-            <span className="section-number">
-              08 / GET IN TOUCH
-            </span>
-
-            <h2 className="section-heading">
-              Start a conversation with <em>Anmol Lab.</em>
-            </h2>
-          </div>
-
-          <div className="contact-details">
-            <div className="contact-detail">
-              <span>Telephone</span>
-
-              {siteConfig.phones.map((phone) => (
-                <a href={phone.href} key={phone.href}>
-                  {phone.display}
-                </a>
-              ))}
-            </div>
-
-            <div className="contact-detail">
-              <span>Email</span>
-
-              <a href={`mailto:${siteConfig.email}`}>
-                {siteConfig.email}
-              </a>
-            </div>
-
-            <div className="contact-detail">
-              <span>Address</span>
-
-              <strong>{siteConfig.address}</strong>
-            </div>
-
-            <div className="contact-detail">
-              <span>Laboratory directions</span>
-
-              <a
-                href={siteConfig.directionsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Find the location ↗
-              </a>
-            </div>
-          </div>
-        </section>
+      <GetInTouch />
       </main>
 
       {/* Only enabled once the laboratory confirms its WhatsApp number */}
@@ -285,21 +129,7 @@ export default function Home() {
         </a>
       )}
 
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <span className="footer-brand">
-            ANMOL HEALTH CARE LAB
-          </span>
-
-          <span className="footer-muted">
-            {siteConfig.tagline}
-          </span>
-
-          <span className="footer-muted">
-            © 2026 Anmol Lab
-          </span>
-        </div>
-      </footer>
+<SiteFooter />
     </>
   );
 }

@@ -10,6 +10,26 @@ import styles from "./branch-directory.module.css";
 
 type RequestStatus = "loading" | "success" | "error";
 
+function getPhoneHref(phone: string) {
+  const sanitizedPhone = phone.replace(/[^\d+]/g, "");
+
+  return /\d/.test(sanitizedPhone)
+    ? `tel:${sanitizedPhone}`
+    : null;
+}
+
+function getSafeExternalUrl(value: string | null | undefined) {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "https:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function BranchDirectory() {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [status, setStatus] = useState<RequestStatus>("loading");
@@ -48,29 +68,30 @@ export default function BranchDirectory() {
     setAttempt((current) => current + 1);
   }
 
-  function getPhoneHref(phone: string) {
-    const sanitizedPhone = phone.replace(/[^\d+]/g, "");
-    return `tel:${sanitizedPhone}`;
-  }
-
   return (
     <section
       id="branches"
       className={styles.section}
       aria-labelledby="branches-title"
     >
-      <div className="container">
-        <div className={styles.heading}>
+      <div className={styles.container}>
+        <div className={styles.meta}>
+          <span>06 / OUR LOCATIONS</span>
+          <span>VISIT ANMOL LAB</span>
+        </div>
+
+        <header className={styles.heading}>
           <div>
-            <span className={styles.sectionNumber}>
-              06 / OUR LOCATIONS
+            <span className={styles.eyebrow}>
+              FIND US NEAR YOU
             </span>
 
             <h2
               id="branches-title"
               className={styles.headingTitle}
             >
-              Find your way to <em>Anmol Lab.</em>
+              Find your way to
+              <em> Anmol Lab.</em>
             </h2>
           </div>
 
@@ -78,7 +99,7 @@ export default function BranchDirectory() {
             Explore our laboratory locations and find the
             information you need before planning your visit.
           </p>
-        </div>
+        </header>
 
         {status === "loading" && (
           <div
@@ -115,7 +136,6 @@ export default function BranchDirectory() {
               onClick={retry}
             >
               Try again
-              <span aria-hidden="true">↗</span>
             </button>
           </div>
         )}
@@ -137,86 +157,102 @@ export default function BranchDirectory() {
 
         {status === "success" && branches.length > 0 && (
           <div className={styles.branchGrid}>
-            {branches.map((branch, index) => (
-              <article
-                className={styles.branchCard}
-                key={branch.id}
-              >
-                <div className={styles.cardTop}>
-                  <span className={styles.branchIndex}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+            {branches.map((branch, index) => {
+              const phoneHref = getPhoneHref(branch.phone);
+              const directionsUrl = getSafeExternalUrl(
+                branch.directionsUrl,
+              );
+              const mapEmbedUrl = getSafeExternalUrl(
+                branch.mapEmbedUrl,
+              );
 
-                  <span className={styles.activeLabel}>
-                    Active location
-                  </span>
-                </div>
-
-                <div className={styles.cardContent}>
-                  <span className={styles.cardEyebrow}>
-                    LABORATORY LOCATION
-                  </span>
-
-                  <h3>{branch.name}</h3>
-
-                  <div className={styles.detail}>
-                    <span className={styles.detailLabel}>
-                      ADDRESS
+              return (
+                <article
+                  className={styles.branchCard}
+                  key={branch.id}
+                >
+                  <div className={styles.cardTop}>
+                    <span className={styles.branchIndex}>
+                      {String(index + 1).padStart(2, "0")}
                     </span>
 
-                    <p>{branch.address}</p>
+                    <span className={styles.cardEyebrow}>
+                      LABORATORY LOCATION
+                    </span>
                   </div>
 
-                  <div className={styles.detail}>
-                    <span className={styles.detailLabel}>
-                      CONTACT
-                    </span>
+                  <div className={styles.cardContent}>
+                    <h3>{branch.name}</h3>
 
-                    <a href={getPhoneHref(branch.phone)}>
-                      {branch.phone}
-                    </a>
+                    <div className={styles.details}>
+                      <div className={styles.detail}>
+                        <span className={styles.detailLabel}>
+                          ADDRESS
+                        </span>
+
+                        <p>{branch.address}</p>
+                      </div>
+
+                      {branch.phone && (
+                        <div className={styles.detail}>
+                          <span className={styles.detailLabel}>
+                            CONTACT
+                          </span>
+
+                          {phoneHref ? (
+                            <a href={phoneHref}>
+                              {branch.phone}
+                            </a>
+                          ) : (
+                            <p>{branch.phone}</p>
+                          )}
+                        </div>
+                      )}
+
+                      {branch.timings && (
+                        <div className={styles.detail}>
+                          <span className={styles.detailLabel}>
+                            HOURS
+                          </span>
+
+                          <p>{branch.timings}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  <div className={styles.detail}>
-                    <span className={styles.detailLabel}>
-                      OPERATING HOURS
-                    </span>
-
-                    <p>{branch.timings}</p>
+                  <div className={styles.cardFooter}>
+                    {directionsUrl ? (
+                      <a
+                        className={styles.directionsLink}
+                        href={directionsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Get directions to ${branch.name}`}
+                      >
+                        Get directions
+                      </a>
+                    ) : (
+                      <span className={styles.noDirections}>
+                        Directions not available
+                      </span>
+                    )}
                   </div>
-                </div>
 
-                <div className={styles.cardFooter}>
-                  {branch.directionsUrl ? (
-                    <a
-                      className={styles.directionsLink}
-                      href={branch.directionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Get directions
-                      <span aria-hidden="true">↗</span>
-                    </a>
-                  ) : (
-                    <span className={styles.noDirections}>
-                      Directions not available
-                    </span>
+                  {mapEmbedUrl && (
+                    <div className={styles.mapFrame}>
+                      <iframe
+                        src={mapEmbedUrl}
+                        title={`Map showing ${branch.name}`}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        allowFullScreen
+                      />
+                    </div>
                   )}
-                </div>
-
-                {branch.mapEmbedUrl && (
-                  <div className={styles.mapFrame}>
-                    <iframe
-                      src={branch.mapEmbedUrl}
-                      title={`Map showing ${branch.name}`}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      allowFullScreen
-                    />
-                  </div>
-                )}
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </div>
