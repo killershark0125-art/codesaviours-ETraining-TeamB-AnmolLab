@@ -302,6 +302,97 @@ The backend generates the branch slug automatically.
 
 ---
 
+### Get All Branches
+
+**GET** `/api/branches/getAllBranches`
+
+Retrieves all branches, including active and inactive branches.
+
+The response contains a `data` array with branch records.
+
+Each branch includes:
+
+- `_id`
+- `name`
+- `slug`
+- `address`
+- `phone`
+- `timings`
+- `mapEmbedUrl`
+- `directionsUrl`
+- `isActive`
+
+### Get Branch By ID
+
+**GET** `/api/branches/getBranchById/:id`
+
+Retrieves a single branch using its MongoDB ID.
+
+Possible responses:
+
+- `200` — Branch fetched successfully.
+- `400` — Invalid branch ID.
+- `404` — Branch not found.
+
+### Update Branch
+
+**PUT** `/api/branches/updateBranch/:id`
+
+Updates an existing branch.
+
+The request must include all required branch fields:
+
+- `name`
+- `address`
+- `phone`
+- `timings`
+
+Optional fields include `mapEmbedUrl`, `directionsUrl`, and `isActive`.
+
+The backend automatically regenerates the slug when the branch name changes.
+
+
+### Delete Branch
+
+**DELETE** `/api/branches/deleteBranch/:id`
+
+Deletes an existing branch using its MongoDB ID.
+
+**Example request:**
+
+```text
+DELETE /api/branches/deleteBranch/BRANCH_ID
+```
+
+**Possible responses:**
+
+- `200` — Branch deleted successfully.
+- `404` — Branch not found.
+- `400` — Invalid branch ID.
+
+**Important:** Deleting a branch permanently removes its record from the database.
+
+### Branch Active Status
+
+- The backend returns both active and inactive branches.
+- The frontend filters branches using `isActive`.
+- Only active branches are displayed in the Branch Directory.
+- Inactive branches remain available through the backend API.
+
+### Validation
+
+If required branch information is missing or invalid, the API returns a `400 Bad Request` response.
+
+Example:
+
+```json
+{
+  "status": 400,
+  "message": "Validation failed"
+}
+```
+
+
 ## 7. Blog Post APIs
 
 **Base endpoint:** `/api/posts`
