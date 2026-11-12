@@ -1,9 +1,10 @@
+
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import SiteHeader from "@/components/layout/site-header";
+import SiteFooter from "@/components/layout/site-footer";
 import TestCatalogue from "@/components/tests/test-catalogue";
-import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Test Catalogue | Anmol Health Care Lab",
@@ -19,10 +20,6 @@ type TestsPageProps = {
   searchParams: Promise<SearchParams>;
 };
 
-/**
- * This component accesses request-time search parameters.
- * It must remain inside the Suspense boundary in the page below.
- */
 async function CatalogueContent({
   searchParams,
 }: TestsPageProps) {
@@ -46,7 +43,7 @@ function CatalogueFallback() {
         minHeight: "360px",
         display: "grid",
         placeItems: "center",
-        color: "#7D7E80",
+        color: "#63747a",
         fontSize: "13px",
       }}
     >
@@ -68,21 +65,7 @@ export default function TestsPage({
         </Suspense>
       </main>
 
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <span className="footer-brand">
-            ANMOL HEALTH CARE LAB
-          </span>
-
-          <span className="footer-muted">
-            {siteConfig.tagline}
-          </span>
-
-          <span className="footer-muted">
-            © 2026 Anmol Lab
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

@@ -1,10 +1,10 @@
 
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import SiteHeader from "@/components/layout/site-header";
 import SiteFooter from "@/components/layout/site-footer";
+import VisualPageHero from "@/components/layout/visual-page-hero";
 
 import styles from "./about.module.css";
 
@@ -71,75 +71,25 @@ export default function AboutPage() {
       <SiteHeader />
 
       <main className={styles.page}>
-        {/* CINEMATIC IMAGE HERO */}
-
-        <section
-          className={styles.hero}
-          aria-labelledby="about-hero-title"
-        >
-          <Image
-            src="/images/about-lab-hero.jpg"
-            alt="Blood sample collection tubes arranged in a laboratory rack"
-            fill
-            priority
-            sizes="100vw"
-            className={styles.heroImage}
-          />
-
-          <div
-            className={styles.heroFade}
-            aria-hidden="true"
-          />
-
-          <div className={styles.heroInner}>
-            <div className={styles.heroMeta}>
-              <span>ANMOL HEALTH CARE LAB</span>
-              <span>ABOUT THE LABORATORY</span>
-            </div>
-
-            <div className={styles.heroCopy}>
-              <span className={styles.heroEyebrow}>
-                GET TO KNOW ANMOL
-              </span>
-
-              <h1 id="about-hero-title">
-                The work behind
-                <br />
-                every test.
-                <em> The care behind every patient.</em>
-              </h1>
-
-              <p>
-                Get to know Anmol Health Care Lab, explore the
-                services available to patients and find the
-                information you need before your visit.
-              </p>
-
-              <div className={styles.heroActions}>
-                <Link
-                  href="/tests"
-                  className={styles.primaryAction}
-                >
-                  Explore available tests
-                </Link>
-
-                <Link
-                  href="/#contact"
-                  className={styles.secondaryAction}
-                >
-                  Get in touch
-                </Link>
-              </div>
-            </div>
-
-            <div className={styles.heroFoot}>
-              <span>FAISALABAD, PAKISTAN</span>
-              <span>PRECISION IN EVERY TEST</span>
-            </div>
-          </div>
-        </section>
-
-        {/* INTRODUCTION */}
+        <VisualPageHero
+          eyebrow="ABOUT THE LABORATORY"
+          title={
+            <>
+              The work behind
+              <br />
+              <em>every test.</em>
+            </>
+          }
+          description="Get to know Anmol Health Care Lab, explore the services available to patients and find the information you need before your visit."
+          imageSrc="/images/about-lab-hero.jpg"
+          imageAlt="Blood sample collection tubes arranged in a laboratory rack"
+          imagePosition="center center"
+          mobileImagePosition="center center"
+          primaryHref="/tests"
+          primaryLabel="Explore available tests"
+          secondaryHref="/#contact"
+          secondaryLabel="Get in touch"
+        />
 
         <section
           className={styles.overview}
@@ -153,9 +103,7 @@ export default function AboutPage() {
 
             <div className={styles.overviewHeading}>
               <div>
-                <span className={styles.eyebrow}>
-                  A CLOSER LOOK
-                </span>
+                <span className={styles.eyebrow}>A CLOSER LOOK</span>
 
                 <h2 id="overview-title">
                   A clearer place
@@ -164,10 +112,10 @@ export default function AboutPage() {
               </div>
 
               <p>
-                Anmol Health Care Lab is located in Faisalabad.
-                This space brings together useful information
-                about the laboratory, its available testing
-                catalogue and the services patients can explore.
+                Anmol Health Care Lab is located in Faisalabad. This space
+                brings together useful information about the laboratory,
+                its available testing catalogue and the services patients
+                can explore.
               </p>
             </div>
 
@@ -203,8 +151,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* OUR APPROACH */}
-
         <section
           className={styles.approach}
           aria-labelledby="approach-title"
@@ -216,9 +162,7 @@ export default function AboutPage() {
             </div>
 
             <header className={styles.approachHeading}>
-              <span className={styles.darkEyebrow}>
-                WHAT MATTERS
-              </span>
+              <span className={styles.darkEyebrow}>WHAT MATTERS</span>
 
               <h2 id="approach-title">
                 Precision in every test.
@@ -226,9 +170,9 @@ export default function AboutPage() {
               </h2>
 
               <p>
-                Finding the right information should feel
-                straightforward. From exploring tests to
-                getting in touch, the next step should be clear.
+                Finding the right information should feel straightforward.
+                From exploring tests to getting in touch, the next step
+                should be clear.
               </p>
             </header>
 
@@ -252,17 +196,13 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* NEXT STEP */}
-
         <section
           className={styles.nextStep}
           aria-labelledby="next-step-title"
         >
           <div className={styles.container}>
             <div className={styles.nextStepCard}>
-              <span className={styles.eyebrow}>
-                TAKE THE NEXT STEP
-              </span>
+              <span className={styles.eyebrow}>TAKE THE NEXT STEP</span>
 
               <h2 id="next-step-title">
                 Have something
@@ -270,8 +210,8 @@ export default function AboutPage() {
               </h2>
 
               <p>
-                Explore the available tests or contact the
-                laboratory for assistance with your enquiry.
+                Explore the available tests or contact the laboratory for
+                assistance with your enquiry.
               </p>
 
               <div className={styles.nextStepActions}>

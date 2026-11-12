@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 
 import SiteHeader from "@/components/layout/site-header";
+import SiteFooter from "@/components/layout/site-footer";
 import PackageDirectory from "@/components/packages/package-directory";
 
 export const metadata: Metadata = {
@@ -19,19 +20,7 @@ export default function PackagesPage() {
         <PackageDirectory variant="full" />
       </main>
 
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <span className="footer-brand">
-            ANMOL HEALTH CARE LAB
-          </span>
-
-
-
-          <span className="footer-muted">
-            © 2026 Anmol Lab
-          </span>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
