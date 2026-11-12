@@ -1,10 +1,9 @@
 
 "use client";
 
-import Link from "next/link";
 import { useId, type FormEvent } from "react";
 
-import CellularBackground from "@/components/home/cellular-background";
+import VisualPageHero from "@/components/layout/visual-page-hero";
 import { RESULT_LIMIT } from "@/lib/api/tests";
 import { formatPrice } from "@/lib/format";
 import { useTestSearch } from "@/lib/hooks/use-test-search";
@@ -33,9 +32,7 @@ export default function TestCatalogue({
   const totalPages = result?.pagination.totalPages ?? 0;
   const currentPage = result?.pagination.currentPage ?? search.page;
 
-  const hasFilters = Boolean(
-    search.input.trim() || search.category,
-  );
+  const hasFilters = Boolean(search.input.trim() || search.category);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,59 +49,25 @@ export default function TestCatalogue({
 
   return (
     <div className={styles.page}>
-      <section
-        className={styles.hero}
-        aria-labelledby="catalogue-title"
-      >
-        <CellularBackground />
-
-        <div
-          className={styles.heroShade}
-          aria-hidden="true"
-        />
-
-        <div className={styles.heroInner}>
-          <div className={styles.breadcrumb}>
-            <Link href="/">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span>Test catalogue</span>
-          </div>
-
-          <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>
-              DIAGNOSTIC CATALOGUE
-              <span className={styles.eyebrowLine} />
-              TEST DIRECTORY
-            </span>
-
-            <h1 id="catalogue-title">
-              Find the test.
-              <br />
-              <em>Know what comes next.</em>
-            </h1>
-
-            <p>
-              Explore the laboratory test catalogue by name or category.
-              Confirm availability, preparation instructions and pricing
-              directly with the laboratory before your visit.
-            </p>
-
-            <Link
-              href="#catalogue-results-title"
-              className={styles.heroAction}
-            >
-              Explore the catalogue
-              <span aria-hidden="true">↓</span>
-            </Link>
-          </div>
-
-          <div className={styles.heroFoot}>
-            <span>TEST DISCOVERY</span>
-            <span>LABORATORY INFORMATION</span>
-            <span>EXPLORE MORE ↓</span>
-          </div>
-        </div>
-      </section>
+      <VisualPageHero
+        eyebrow="TEST CATALOGUE"
+        title={
+          <>
+            Find the test.
+            <br />
+            <em>Know what comes next.</em>
+          </>
+        }
+        description="Explore the laboratory test catalogue by name or category. Confirm availability, preparation instructions and pricing directly with the laboratory before your visit."
+        imageSrc="/images/test-catalogue-hero.jpg"
+        imageAlt="Automated laboratory analyzer used for processing diagnostic samples"
+        imagePosition="center center"
+        mobileImagePosition="center center"
+        primaryHref="#catalogue-results-title"
+        primaryLabel="Explore the catalogue"
+        secondaryHref="/#contact"
+        secondaryLabel="Contact the laboratory"
+      />
 
       <section
         className={styles.catalogueSection}
@@ -123,8 +86,8 @@ export default function TestCatalogue({
             </div>
 
             <p>
-              Search the available catalogue or narrow your results
-              by laboratory category.
+              Search the available catalogue or narrow your results by
+              laboratory category.
             </p>
           </div>
 
@@ -135,17 +98,11 @@ export default function TestCatalogue({
               onSubmit={handleSubmit}
               aria-busy={isLoading}
             >
-              <label
-                className={styles.srOnly}
-                htmlFor={inputId}
-              >
-                Search tests by name
+              <label className={styles.srOnly} htmlFor={inputId}>
+                Search tests by name or code
               </label>
 
-              <span
-                className={styles.searchIcon}
-                aria-hidden="true"
-              >
+              <span className={styles.searchIcon} aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none">
                   <circle cx="10.8" cy="10.8" r="6.7" />
                   <path d="m15.8 15.8 4.1 4.1" />
@@ -158,7 +115,7 @@ export default function TestCatalogue({
                 value={search.input}
                 maxLength={80}
                 autoComplete="off"
-                placeholder="Search by test name..."
+                placeholder="Search by test name or code..."
                 onChange={(event) =>
                   search.updateInput(event.target.value)
                 }
@@ -172,11 +129,7 @@ export default function TestCatalogue({
                   aria-label="Clear search"
                   title="Clear search"
                 >
-                  <svg
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    aria-hidden="true"
-                  >
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
                     <path d="m5 5 10 10M15 5 5 15" />
                   </svg>
                 </button>
@@ -188,23 +141,18 @@ export default function TestCatalogue({
                 disabled={isLoading}
               >
                 {isLoading ? "Searching..." : "Search"}
-                <span aria-hidden="true">↗</span>
               </button>
             </form>
 
             <div className={styles.filterControls}>
               <div className={styles.categoryControl}>
-                <label htmlFor={categoryId}>
-                  Filter by category
-                </label>
+                <label htmlFor={categoryId}>Filter by category</label>
 
                 <select
                   id={categoryId}
                   value={search.category ?? ""}
                   onChange={(event) =>
-                    search.selectCategory(
-                      event.target.value || null,
-                    )
+                    search.selectCategory(event.target.value || null)
                   }
                   disabled={search.categoriesLoading}
                 >
@@ -215,10 +163,7 @@ export default function TestCatalogue({
                   </option>
 
                   {search.categories.map((category) => (
-                    <option
-                      key={category.id}
-                      value={category.id}
-                    >
+                    <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
                   ))}
@@ -232,18 +177,14 @@ export default function TestCatalogue({
                   onClick={handleReset}
                 >
                   Reset filters
-                  <span aria-hidden="true">×</span>
                 </button>
               )}
             </div>
 
             {search.categoriesError && (
-              <p
-                className={styles.categoryWarning}
-                role="status"
-              >
-                Category filters are temporarily unavailable.
-                You can still search the test catalogue.
+              <p className={styles.categoryWarning} role="status">
+                Category filters are temporarily unavailable. You can still
+                search the test catalogue.
               </p>
             )}
           </div>
@@ -278,24 +219,18 @@ export default function TestCatalogue({
             aria-busy={isLoading}
           >
             {isLoading && (
-              <div className={styles.loadingState}>
-                <span
-                  className={styles.spinner}
-                  aria-hidden="true"
-                />
+              <div className={styles.loadingState} role="status">
+                <span className={styles.spinner} aria-hidden="true" />
+
                 <strong>Loading the test catalogue</strong>
+
                 <p>Retrieving available laboratory tests.</p>
               </div>
             )}
 
             {search.status === "error" && (
-              <div
-                className={styles.statePanel}
-                role="alert"
-              >
-                <span className={styles.stateIndex}>
-                  01 / CONNECTION
-                </span>
+              <div className={styles.statePanel} role="alert">
+                <span className={styles.stateIndex}>01 / CONNECTION</span>
 
                 <h3>The catalogue could not be loaded.</h3>
 
@@ -304,12 +239,8 @@ export default function TestCatalogue({
                     "Please check your connection and try again."}
                 </p>
 
-                <button
-                  type="button"
-                  onClick={search.retry}
-                >
+                <button type="button" onClick={search.retry}>
                   Try again
-                  <span aria-hidden="true">↗</span>
                 </button>
               </div>
             )}
@@ -318,9 +249,7 @@ export default function TestCatalogue({
               result &&
               result.items.length === 0 && (
                 <div className={styles.statePanel}>
-                  <span className={styles.stateIndex}>
-                    02 / NO MATCHES
-                  </span>
+                  <span className={styles.stateIndex}>02 / NO MATCHES</span>
 
                   <h3>
                     {hasFilters
@@ -335,12 +264,8 @@ export default function TestCatalogue({
                   </p>
 
                   {hasFilters && (
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                    >
+                    <button type="button" onClick={handleReset}>
                       Clear filters
-                      <span aria-hidden="true">↗</span>
                     </button>
                   )}
                 </div>
@@ -357,16 +282,11 @@ export default function TestCatalogue({
                         : formatPrice(test.price);
 
                     return (
-                      <article
-                        className={styles.testCard}
-                        key={test.id}
-                      >
+                      <article className={styles.testCard} key={test.id}>
                         <div className={styles.cardTop}>
                           <span className={styles.cardIndex}>
                             {String(
-                              (currentPage - 1) * search.limit +
-                                index +
-                                1,
+                              (currentPage - 1) * search.limit + index + 1,
                             ).padStart(2, "0")}
                           </span>
 
@@ -387,22 +307,13 @@ export default function TestCatalogue({
                         </div>
 
                         <div className={styles.cardBottom}>
-                          <div>
-                            <span className={styles.priceLabel}>
-                              TEST PRICE
-                            </span>
-
-                            <strong className={styles.priceValue}>
-                              {priceLabel}
-                            </strong>
-                          </div>
-
-                          <span
-                            className={styles.cardMark}
-                            aria-hidden="true"
-                          >
-                            +
+                          <span className={styles.priceLabel}>
+                            TEST PRICE
                           </span>
+
+                          <strong className={styles.priceValue}>
+                            {priceLabel}
+                          </strong>
                         </div>
                       </article>
                     );
@@ -418,9 +329,7 @@ export default function TestCatalogue({
             >
               <button
                 type="button"
-                onClick={() =>
-                  search.changePage(currentPage - 1)
-                }
+                onClick={() => search.changePage(currentPage - 1)}
                 disabled={currentPage <= 1 || isLoading}
               >
                 <span aria-hidden="true">←</span>
@@ -435,9 +344,7 @@ export default function TestCatalogue({
 
               <button
                 type="button"
-                onClick={() =>
-                  search.changePage(currentPage + 1)
-                }
+                onClick={() => search.changePage(currentPage + 1)}
                 disabled={currentPage >= totalPages || isLoading}
               >
                 Next
@@ -450,10 +357,9 @@ export default function TestCatalogue({
             <span aria-hidden="true">i</span>
 
             <p>
-              Test availability, preparation requirements, sample
-              details and prices should be confirmed directly with
-              the laboratory. Do not use this catalogue as a
-              substitute for medical advice.
+              Test availability, preparation requirements, sample details
+              and prices should be confirmed directly with the laboratory.
+              Do not use this catalogue as a substitute for medical advice.
             </p>
           </div>
         </div>
