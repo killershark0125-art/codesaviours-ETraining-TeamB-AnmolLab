@@ -65,7 +65,7 @@ export default function SiteFooter() {
 
             <div className={styles.actions}>
               <Link
-                href="/tests"
+                href="/book"
                 className={styles.primaryAction}
               >
                 Book a Test

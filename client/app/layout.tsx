@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Manrope } from "next/font/google";
+import RouteScrollReset from "@/components/layout/route-scroll-reset";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -30,7 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${instrumentSerif.variable} ${manrope.variable}`}>
-      <body>{children}</body>
+      <body>
+        <RouteScrollReset />
+        {children}
+      </body>
     </html>
   );
 }

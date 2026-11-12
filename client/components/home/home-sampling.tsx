@@ -53,7 +53,7 @@ export default function HomeSampling() {
             </p>
 
             <div className={styles.actionRow}>
-              <Link href="#contact" className={styles.action}>
+              <Link href="/home-sampling" className={styles.action}>
                 Request home sampling
               </Link>
             </div>

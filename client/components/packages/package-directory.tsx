@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import CellularBackground from "@/components/home/cellular-background";
+import VisualPageHero from "@/components/layout/visual-page-hero";
 import { getHealthPackages } from "@/lib/api/packages";
 import { formatPrice } from "@/lib/format";
 import type { HealthPackage } from "@/lib/types";
@@ -27,9 +27,7 @@ export default function PackageDirectory({
 
   const isPreview = variant === "preview";
 
-  const visiblePackages = isPreview
-    ? packages.slice(0, 3)
-    : packages;
+  const visiblePackages = isPreview ? packages.slice(0, 3) : packages;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -69,7 +67,9 @@ export default function PackageDirectory({
       className={`${styles.section} ${
         isPreview ? styles.preview : styles.full
       }`}
-      aria-labelledby="packages-title"
+      aria-labelledby={
+        isPreview ? "packages-title" : "visual-page-hero-title"
+      }
     >
       {isPreview ? (
         <div className={styles.container}>
@@ -86,67 +86,34 @@ export default function PackageDirectory({
             </div>
 
             <p>
-              Explore the laboratory&apos;s available health
-              packages and discover the tests included in each.
+              Explore the laboratory&apos;s available health packages and
+              discover the tests included in each.
             </p>
           </div>
         </div>
       ) : (
-        <div className={styles.fullHero}>
-          <CellularBackground />
-
-          <div
-            className={styles.heroShade}
-            aria-hidden="true"
-          />
-
-          <div className={styles.heroInner}>
-            <div className={styles.breadcrumb}>
-              <Link href="/">Home</Link>
-              <span aria-hidden="true">/</span>
-              <span>Health packages</span>
-            </div>
-
-            <div className={styles.heroCopy}>
-              <span className={styles.eyebrow}>
-                ANMOL HEALTH CARE LAB
-                <span className={styles.eyebrowLine} />
-                HEALTH PACKAGES
-              </span>
-
-              <h1 id="packages-title">
-                Thoughtful testing.
-                <br />
-                <em>Clearer choices.</em>
-              </h1>
-
-              <p>
-                Explore laboratory packages, their included
-                tests and verified pricing information.
-              </p>
-
-              <Link
-                href="#package-list"
-                className={styles.heroAction}
-              >
-                Explore packages
-                <span aria-hidden="true">↓</span>
-              </Link>
-            </div>
-
-            <div className={styles.heroFoot}>
-              <span>ANMOL HEALTH CARE LAB</span>
-              <span>DETAILED DIAGNOSTICS</span>
-              <span>DISCOVER MORE</span>
-            </div>
-          </div>
-        </div>
+        <VisualPageHero
+          eyebrow="HEALTH PACKAGES"
+          title={
+            <>
+              Thoughtful testing.
+              <br />
+              <em>Clearer choices.</em>
+            </>
+          }
+          description="Explore laboratory packages, their included tests and verified pricing information."
+          imageSrc="/images/packages-hero.jpg"
+          imageAlt="Organized laboratory sample tubes arranged on a collection trolley"
+          imagePosition="60% center"
+          mobileImagePosition="60% center"
+          primaryHref="#package-list"
+          primaryLabel="Explore packages"
+          secondaryHref="/#contact"
+          secondaryLabel="Contact the laboratory"
+        />
       )}
 
-      <div
-        id="package-list"
-        className={styles.container}
-      >
+      <div id="package-list" className={styles.container}>
         <div className={styles.resultsHeading}>
           <div>
             <span className={styles.resultsEyebrow}>
@@ -158,24 +125,17 @@ export default function PackageDirectory({
                 ? "Retrieving package information..."
                 : status === "success"
                   ? `${packages.length} ${
-                      packages.length === 1
-                        ? "package"
-                        : "packages"
+                      packages.length === 1 ? "package" : "packages"
                     } available`
                   : "Package information"}
             </p>
           </div>
 
-          {isPreview &&
-            status === "success" &&
-            packages.length > 0 && (
-              <Link
-                href="/packages"
-                className={styles.viewAll}
-              >
-                Explore all packages
-              </Link>
-            )}
+          {isPreview && status === "success" && packages.length > 0 && (
+            <Link href="/packages" className={styles.viewAll}>
+              Explore all packages
+            </Link>
+          )}
         </div>
 
         {status === "loading" && (
@@ -185,7 +145,9 @@ export default function PackageDirectory({
             aria-live="polite"
           >
             <span className={styles.spinner} aria-hidden="true" />
+
             <strong>Loading health packages</strong>
+
             <p>Retrieving current package information.</p>
           </div>
         )}
@@ -219,8 +181,8 @@ export default function PackageDirectory({
             <h3>No active packages are currently listed.</h3>
 
             <p>
-              The laboratory has not published any active
-              health packages. Please check again later.
+              The laboratory has not published any active health packages.
+              Please check again later.
             </p>
           </div>
         )}
@@ -230,8 +192,7 @@ export default function PackageDirectory({
             {visiblePackages.map((item, index) => {
               const hasPackagePrice = item.packagePrice !== null;
               const hasOriginalPrice = item.originalPrice !== null;
-              const hasSavings =
-                item.savings !== null && item.savings > 0;
+              const hasSavings = item.savings !== null && item.savings > 0;
 
               return (
                 <article
@@ -268,22 +229,18 @@ export default function PackageDirectory({
 
                       <span>
                         {item.includedTests.length}{" "}
-                        {item.includedTests.length === 1
-                          ? "test"
-                          : "tests"}
+                        {item.includedTests.length === 1 ? "test" : "tests"}
                       </span>
                     </div>
 
                     {item.includedTests.length > 0 ? (
                       <ul className={styles.testList}>
-                        {item.includedTests
-                          .slice(0, 6)
-                          .map((test) => (
-                            <li key={test.id}>
-                              <span aria-hidden="true" />
-                              {test.name}
-                            </li>
-                          ))}
+                        {item.includedTests.slice(0, 6).map((test) => (
+                          <li key={test.id}>
+                            <span aria-hidden="true" />
+                            {test.name}
+                          </li>
+                        ))}
                       </ul>
                     ) : (
                       <p className={styles.missingTests}>
@@ -311,8 +268,7 @@ export default function PackageDirectory({
 
                     {hasOriginalPrice && (
                       <span className={styles.originalPrice}>
-                        Regular total:{" "}
-                        {formatPrice(item.originalPrice!)}
+                        Regular total: {formatPrice(item.originalPrice!)}
                       </span>
                     )}
 
@@ -334,24 +290,21 @@ export default function PackageDirectory({
           </div>
         )}
 
-        {isPreview &&
-          status === "success" &&
-          packages.length > 0 && (
-            <div className={styles.mobileViewAll}>
-              <Link href="/packages">
-                Explore all packages
-              </Link>
-            </div>
-          )}
+        {isPreview && status === "success" && packages.length > 0 && (
+          <div className={styles.mobileViewAll}>
+            <Link href="/packages">Explore all packages</Link>
+          </div>
+        )}
 
         {!isPreview && (
           <div className={styles.disclaimer}>
             <span aria-hidden="true">i</span>
+
             <p>
-              Package information and prices are displayed
-              according to the published laboratory catalogue.
-              Confirm package availability and details directly
-              with Anmol Lab. This information is not medical advice.
+              Package information and prices are displayed according to
+              the published laboratory catalogue. Confirm package
+              availability and details directly with Anmol Lab. This
+              information is not medical advice.
             </p>
           </div>
         )}

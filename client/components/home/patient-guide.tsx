@@ -56,7 +56,7 @@ export default function PatientGuide() {
         </div>
 
         <div className={styles.actionRow}>
-          <a href="#contact" className={styles.action}>
+          <a href="/contact" className={styles.action}>
             Contact the laboratory
             
           </a>
