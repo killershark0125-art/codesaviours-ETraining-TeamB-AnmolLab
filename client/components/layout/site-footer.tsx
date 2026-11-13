@@ -1,61 +1,47 @@
-
 import Link from "next/link";
 import Image from "next/image";
+
+import { siteConfig } from "@/lib/site";
 import styles from "./site-footer.module.css";
 
 const exploreLinks = [
-  { label: "Find a Test", href: "/tests" },
-  { label: "Health Packages", href: "/packages" },
-  { label: "Patient Guide", href: "/#how-it-works" },
-  { label: "Home Sampling", href: "/#home-sampling" },
+  { label: "About the laboratory", href: "/about" },
+  { label: "Find a test", href: "/tests" },
+  { label: "Health packages", href: "/packages" },
+  { label: "For doctors", href: "/doctors" },
+  { label: "Latest articles", href: "/blog" },
+  { label: "Frequently asked questions", href: "/faq" },
 ];
 
 const patientLinks = [
-  { label: "Our Locations", href: "/#branches" },
-  { label: "Patient Reports", href: "/reports" },
-  { label: "Get in Touch", href: "/#contact" },
+  { label: "Book a test", href: "/book" },
+  { label: "Home sampling", href: "/home-sampling" },
+  { label: "Our locations", href: "/branches" },
+  { label: "Patient reports", href: "/reports" },
+  { label: "Contact the laboratory", href: "/contact" },
+  { label: "Privacy policy", href: "/privacy" },
+  { label: "Terms of service", href: "/terms" },
 ];
-
-const phoneNumbers = [
-  {
-    label: "0316-6474766",
-    href: "tel:+923166474766",
-  },
-  {
-    label: "0321-6671476",
-    href: "tel:+92321667476",
-  },
-];
-
-const email = "anmollaboratory@gmail.com";
-
-const address =
-  "Sultani Chowk, Gulshan Muhammad Abad, Faisalabad";
-
-const mapsUrl =
-  "https://www.google.com/maps/search/?api=1&query=Anmol%20Health%20Care%20Lab%2C%20Sultani%20Chowk%2C%20Gulshan%20Muhammad%20Abad%2C%20Faisalabad";
 
 export default function SiteFooter() {
-  
-
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.footerMain}>
           <div className={styles.brand}>
-<Link
-  href="/"
-  className={styles.brandLogoLink}
-  aria-label="Anmol Health Care Lab home"
->
-  <Image
-    src="/brand/logo-full-white.png"
-    alt=""
-    width={88}
-    height={88}
-    className={styles.brandLogo}
-  />
-</Link>
+            <Link
+              href="/"
+              className={styles.brandLogoLink}
+              aria-label={`${siteConfig.name} home`}
+            >
+              <Image
+                src="/brand/logo-full-white.png"
+                alt=""
+                width={88}
+                height={88}
+                className={styles.brandLogo}
+              />
+            </Link>
 
             <p className={styles.brandDescription}>
               Precision in every test.
@@ -82,12 +68,12 @@ export default function SiteFooter() {
 
           <nav
             className={styles.linkGroup}
-            aria-label="Explore"
+            aria-label="Explore the laboratory"
           >
             <h2>EXPLORE</h2>
 
             {exploreLinks.map((link) => (
-              <Link href={link.href} key={link.label}>
+              <Link href={link.href} key={link.href}>
                 {link.label}
               </Link>
             ))}
@@ -95,12 +81,12 @@ export default function SiteFooter() {
 
           <nav
             className={styles.linkGroup}
-            aria-label="Patient services"
+            aria-label="Patient services and information"
           >
             <h2>PATIENT SERVICES</h2>
 
             {patientLinks.map((link) => (
-              <Link href={link.href} key={link.label}>
+              <Link href={link.href} key={link.href}>
                 {link.label}
               </Link>
             ))}
@@ -111,22 +97,22 @@ export default function SiteFooter() {
 
             <a
               className={styles.address}
-              href={mapsUrl}
+              href={siteConfig.directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {address}
+              {siteConfig.address}
             </a>
 
             <div className={styles.contactLinks}>
-              {phoneNumbers.map((phone) => (
+              {siteConfig.phones.map((phone) => (
                 <a href={phone.href} key={phone.href}>
-                  {phone.label}
+                  {phone.display}
                 </a>
               ))}
 
-              <a href={`mailto:${email}`}>
-                {email}
+              <a href={`mailto:${siteConfig.email}`}>
+                {siteConfig.email}
               </a>
             </div>
           </div>
@@ -134,7 +120,7 @@ export default function SiteFooter() {
 
         <div className={styles.footerBottom}>
           <span>
-            © 2026 Anmol Health Care Lab.
+            © 2026 {siteConfig.name}.
             All rights reserved.
           </span>
 
