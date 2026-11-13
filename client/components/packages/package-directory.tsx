@@ -279,11 +279,11 @@ export default function PackageDirectory({
                     )}
                   </div>
 
-                  <div className={styles.cardFooter}>
-                    <Link href="/tests">
-                      Explore individual tests
-                    </Link>
-                  </div>
+<div className={styles.cardFooter}>
+  <Link href={`/packages/${encodeURIComponent(item.slug)}`}>
+    View package details ↗
+  </Link>
+</div>
                 </article>
               );
             })}

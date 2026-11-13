@@ -1,15 +1,22 @@
-
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 export default function RouteScrollReset() {
+  return (
+    <Suspense fallback={null}>
+      <RouteScrollResetContent />
+    </Suspense>
+  );
+}
+
+function RouteScrollResetContent() {
   const pathname = usePathname();
   const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    // Don't interfere with the initial page load.
+    // Do not interfere with the initial page load.
     if (previousPathname.current === pathname) return;
 
     previousPathname.current = pathname;
@@ -17,7 +24,7 @@ export default function RouteScrollReset() {
     // Preserve navigation to a specific section.
     if (window.location.hash) return;
 
-    // Start every newly visited page at its hero.
+    // Start each newly visited page at the top.
     window.scrollTo({
       top: 0,
       left: 0,

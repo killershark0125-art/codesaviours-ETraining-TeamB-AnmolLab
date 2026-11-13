@@ -1,10 +1,9 @@
-
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import styles from "./site-header.module.css";
 
@@ -19,6 +18,14 @@ const navigation = [
 ];
 
 export default function SiteHeader() {
+  return (
+    <Suspense fallback={null}>
+      <SiteHeaderContent />
+    </Suspense>
+  );
+}
+
+function SiteHeaderContent() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -56,7 +63,6 @@ export default function SiteHeader() {
           />
         </Link>
 
-        {/* Desktop navigation */}
         <nav
           className="glass-nav-links"
           aria-label="Main navigation"
@@ -80,7 +86,6 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        {/* Desktop actions */}
         <div className="glass-nav-actions">
           <Link
             href="/book"
@@ -103,7 +108,6 @@ export default function SiteHeader() {
           </Link>
         </div>
 
-        {/* Mobile menu toggle */}
         <button
           type="button"
           className="glass-nav-toggle"
@@ -132,7 +136,6 @@ export default function SiteHeader() {
         </button>
       </div>
 
-      {/* Mobile navigation */}
       {menuOpen && (
         <div
           id="mobile-navigation"
