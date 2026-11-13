@@ -1,0 +1,547 @@
+.page {
+  min-height: 70vh;
+  padding: 30px 0 95px;
+  background: #f5f6f1;
+  color: #142a32;
+}
+
+.container {
+  width: min(1240px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-bottom: 25px;
+  color: #87938f;
+  font-size: 11px;
+}
+
+.breadcrumbs a {
+  color: #537073;
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: #16848e;
+}
+
+.breadcrumbs [aria-current="page"] {
+  color: #203e43;
+  font-weight: 700;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  align-items: center;
+  gap: clamp(35px, 7vw, 90px);
+  padding: clamp(35px, 6vw, 75px);
+  border-radius: 25px;
+  background:
+    radial-gradient(circle at 10% 5%, rgba(47, 184, 167, 0.18), transparent 34%),
+    linear-gradient(125deg, #172b42, #102e3a 60%, #123c43);
+  color: #f7f8f3;
+}
+
+.eyebrow,
+.sectionLabel {
+  display: block;
+  margin-bottom: 19px;
+  color: #16848e;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.hero .eyebrow {
+  color: #9bd5c8;
+}
+
+.category {
+  display: inline-flex;
+  padding: 8px 12px;
+  border: 1px solid rgba(175, 222, 211, 0.26);
+  border-radius: 99px;
+  color: #a8d9cd;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.heroCopy h1 {
+  max-width: 720px;
+  margin: 21px 0 16px;
+  color: #f6f7f2;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(45px, 6vw, 76px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.heroCopy > p {
+  max-width: 650px;
+  margin: 0;
+  color: rgba(239, 247, 241, 0.73);
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.heroMeta span {
+  padding: 9px 11px;
+  border: 1px solid rgba(239, 247, 241, 0.17);
+  border-radius: 5px;
+  color: rgba(239, 247, 241, 0.78);
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+}
+
+.priceCard {
+  display: flex;
+  flex-direction: column;
+  padding: 27px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: #f9fbf8;
+  color: #142a32;
+  box-shadow: 0 20px 55px rgba(4, 24, 31, 0.15);
+}
+
+.priceEyebrow {
+  color: #75847f;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.packagePrice {
+  margin-top: 13px;
+  color: #203e43;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(28px, 3vw, 37px);
+  font-weight: 400;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.originalPrice {
+  margin-top: 11px;
+  color: #8a9691;
+  font-size: 10px;
+  text-decoration: line-through;
+}
+
+.savings {
+  margin-top: 8px;
+  color: #16848e;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.priceCard > p {
+  margin: 18px 0 21px;
+  color: #778681;
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: flex;
+  min-height: 45px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border: 0;
+  background: #16848e;
+  color: #fff;
+}
+
+.primaryButton:hover {
+  background: #106d76;
+}
+
+.secondaryButton {
+  margin-top: 9px;
+  border: 1px solid rgba(31, 67, 70, 0.14);
+  background: transparent;
+  color: #31565b;
+}
+
+.secondaryButton:hover {
+  border-color: #16848e;
+  background: #edf5f1;
+}
+
+.testsSection {
+  padding: 90px 0;
+}
+
+.sectionHeading {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr;
+  align-items: end;
+  gap: 35px;
+  margin-bottom: 29px;
+}
+
+.sectionHeading h2,
+.informationGrid h2 {
+  margin: 0;
+  color: #18373d;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(38px, 5vw, 53px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.sectionHeading h2 em,
+.informationGrid h2 em {
+  color: #16848e;
+  font-weight: 400;
+}
+
+.sectionHeading > p,
+.informationGrid > div:first-child > p {
+  max-width: 440px;
+  margin: 0 0 4px;
+  color: #748380;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.testList {
+  border-top: 1px solid rgba(31, 67, 70, 0.15);
+}
+
+.testItem {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) minmax(120px, auto);
+  align-items: center;
+  gap: 18px;
+  padding: 22px 14px;
+  border-bottom: 1px solid rgba(31, 67, 70, 0.12);
+  transition: background 150ms ease;
+}
+
+.testItem:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.testNumber {
+  color: #16848e;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 25px;
+}
+
+.testInfo h3 {
+  margin: 0;
+  color: #29464a;
+  font-size: 13px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.testInfo > span {
+  display: block;
+  margin-top: 6px;
+  color: #899591;
+  font-size: 9px;
+}
+
+.testPrice {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.testPrice strong {
+  color: #385c5e;
+  font-size: 11px;
+}
+
+.testPrice > span {
+  color: #899591;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-align: right;
+}
+
+.emptyTests {
+  padding: 30px;
+  border: 1px solid rgba(31, 67, 70, 0.1);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.emptyTests h3 {
+  margin: 0;
+  color: #29464a;
+  font-size: 13px;
+}
+
+.emptyTests p {
+  margin: 9px 0 0;
+  color: #7e8c88;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.information {
+  padding: 65px 0;
+  background: #eaf1ec;
+}
+
+.informationGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  align-items: center;
+  gap: 60px;
+}
+
+.informationGrid > div:first-child > p {
+  margin-top: 16px;
+}
+
+.informationCard {
+  display: grid;
+  gap: 13px;
+  padding: 26px;
+  border: 1px solid rgba(31, 67, 70, 0.1);
+  border-radius: 13px;
+  background: #fff;
+}
+
+.informationCard > span {
+  margin-bottom: 5px;
+  color: #16848e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.informationCard a {
+  color: #31565b;
+  font-size: 12px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.informationCard a:last-child {
+  color: #16848e;
+}
+
+.informationCard a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bottomActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 32px 0 0;
+}
+
+.textLink,
+.bookingLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #16848e;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.bookingLink {
+  padding: 13px 17px;
+  border-radius: 6px;
+  background: #20284f;
+  color: #fff;
+}
+
+.textLink:hover,
+.bookingLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.statePanel {
+  display: grid;
+  justify-items: start;
+  gap: 13px;
+  max-width: 700px;
+  min-height: 330px;
+  align-content: center;
+  margin: 65px auto;
+  padding: clamp(27px, 6vw, 55px);
+  border: 1px solid rgba(31, 67, 70, 0.1);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.statePanel h1 {
+  margin: 0;
+  color: #203e43;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(36px, 5vw, 51px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.statePanel p {
+  max-width: 530px;
+  margin: 0;
+  color: #758481;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+.stateLabel {
+  color: #16848e;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.statePanel .primaryButton {
+  min-width: 190px;
+}
+
+.statePanel .textLink {
+  margin-top: 5px;
+}
+
+.spinner {
+  width: 25px;
+  height: 25px;
+  border: 2px solid #dce9e3;
+  border-top-color: #16848e;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 2px solid #16848e;
+  outline-offset: 4px;
+}
+
+@media (max-width: 850px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .priceCard {
+    width: min(100%, 430px);
+  }
+
+  .sectionHeading,
+  .informationGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .informationGrid {
+    gap: 30px;
+  }
+
+  .informationCard {
+    width: min(100%, 430px);
+  }
+}
+
+@media (max-width: 560px) {
+  .container {
+    width: min(100% - 32px, 1240px);
+  }
+
+  .hero {
+    gap: 30px;
+    padding: 29px 22px;
+    border-radius: 17px;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(43px, 13vw, 59px);
+  }
+
+  .priceCard {
+    padding: 22px;
+  }
+
+  .testsSection {
+    padding: 65px 0;
+  }
+
+  .testItem {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 12px;
+    padding: 17px 5px;
+  }
+
+  .testPrice {
+    grid-column: 2;
+    justify-items: start;
+  }
+
+  .testPrice > span {
+    text-align: left;
+  }
+
+  .information {
+    padding: 50px 0;
+  }
+
+  .bottomActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .bookingLink {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+
+  .testItem {
+    transition: none;
+  }
+}
