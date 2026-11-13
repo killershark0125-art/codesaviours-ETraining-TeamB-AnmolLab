@@ -46,10 +46,10 @@ const createTest = async (req, res) => {
 
 const getAllTests = async(req,res)=>{
     try{
-         const {search,category,isActive,page = 1,limit = 10} = req.query;
+         const {search,category,page = 1,limit = 10} = req.query;
          const pageNumber = Math.max(1, parseInt(page, 10) || 1);
          const limitNumber = Math.min(100,Math.max(1, parseInt(limit, 10) || 10));
-         const filter = {};
+         const filter = {isActive: true };
          if (search && search.trim()) {
 
          const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -64,12 +64,6 @@ const getAllTests = async(req,res)=>{
             }
             filter.category = category;
         };
-        if (isActive !== undefined) {
-            if (!["true", "false"].includes(isActive)) {
-                return responseHandler(res,StatusCodes.BAD_REQUEST,"isActive must be true or false");
-            }
-            filter.isActive = isActive === "true";
-        }
         const skip = (pageNumber - 1) * limitNumber;
         const [tests, totalTests] = await Promise.all([Test.find(filter)
                 .populate("category", "name")
@@ -105,7 +99,10 @@ const getTestById = async(req,res)=>{
         if(!require("mongoose").Types.ObjectId.isValid(id)){
             return responseHandler(res, StatusCodes.BAD_REQUEST, "Invalid test ID");
         }
-        const test = await Test.findById(id)
+        const test = await Test.findOne({
+            _id: id,
+            isActive: true 
+        })
         .populate("category","name");
         if(!test){
             return responseHandler(res, StatusCodes.NOT_FOUND, "Test not found");

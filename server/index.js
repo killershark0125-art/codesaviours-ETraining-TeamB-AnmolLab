@@ -1,12 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+dotenv.config();
 const connectDB = require("./config/db");
 const createTestIndexes = require("./config/testIndexes");
-dotenv.config();
+const cookieParser = require("cookie-parser");
+
 
 const app = express();
-
+app.use(cookieParser());
 
 const categoryRoutes = require("./routes/categoryRoutes");
 const testRoutes = require("./routes/testRoutes");
@@ -15,6 +17,8 @@ const branchRoutes = require("./routes/branchRoutes");
 const postRoutes = require("./routes/postRoutes");
 const faqRoutes = require("./routes/faqRoutes");
 const inquiryRoutes = require("./routes/inquiryRoutes");
+const authRoutes = require("./routes/user.js");
+const chatbotRoutes = require("./routes/chatbotRoutes.js");
 
 
 app.use(cors());
@@ -31,6 +35,8 @@ app.use("/api/branches", branchRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/auth", authRoutes)
+app.use("/api/chatbot", chatbotRoutes)
 
 
 const startServer = async () => {

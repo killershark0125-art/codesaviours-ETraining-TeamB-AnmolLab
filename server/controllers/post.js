@@ -42,7 +42,7 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
     try {
-        const filter = {};
+        const filter = {isPublished: true };
 
         if (req.query.isPublished !== undefined) {
             if (!["true", "false"].includes(req.query.isPublished)) {
@@ -70,7 +70,10 @@ const getPostById = async (req, res) => {
             return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid blog post ID");
         }
 
-        const post = await Post.findById(req.params.id);
+        const post = await Post.findOne({
+    _id: req.params.id,
+    isPublished: true
+});
 
         if (!post) {
             return responseHandler(res,StatusCodes.NOT_FOUND,"Blog post not found");

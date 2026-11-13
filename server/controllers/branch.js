@@ -39,7 +39,7 @@ const createBranch = async (req, res) => {
 
 const getAllBranches = async (req, res) => {
     try {
-        const branches = await Branch.find().sort({ createdAt: -1 });
+        const branches = await Branch.find({ isActive: true }).sort({ createdAt: -1 });
 
         return responseHandler(res,StatusCodes.SUCCESS,"Branches fetched successfully",branches);
     } catch (error) {
@@ -56,7 +56,10 @@ const getBranchById = async (req, res) => {
             return responseHandler(res, StatusCodes.BAD_REQUEST, "Invalid branch ID");
         }
 
-        const branch = await Branch.findById(id);
+        const branch = await Branch.findOne({
+             _id: id,
+             isActive: true
+          });
 
         if (!branch) {
             return responseHandler(res,StatusCodes.NOT_FOUND,"Branch not found");
