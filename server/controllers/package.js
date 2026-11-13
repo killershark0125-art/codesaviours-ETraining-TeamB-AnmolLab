@@ -100,7 +100,7 @@ const createPackage = async (req, res) => {
 
 const getAllPackages = async (req, res) => {
     try {
-        const packages = await Package.find()
+        const packages = await Package.find({ isActive: true })
             .populate("includedTests", "name slug price priceStatus")
             .sort({ createdAt: -1 });
 
@@ -118,7 +118,10 @@ const getPackageById = async (req, res) => {
             return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid package ID");
         }
 
-        const packageData = await Package.findById(req.params.id)
+        const packageData = await Package.findOne({
+               _id: req.params.id,
+               isActive: true
+})
             .populate("includedTests", "name slug price priceStatus");
 
         if (!packageData) {
