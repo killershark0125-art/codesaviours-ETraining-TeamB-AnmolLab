@@ -243,7 +243,7 @@ export default function ReportsPage() {
               </span>
 
               <h2 id="contact-title">
-                We're here to <em>help.</em>
+                We&apos;re here to <em>help.</em>
               </h2>
 
               <p>

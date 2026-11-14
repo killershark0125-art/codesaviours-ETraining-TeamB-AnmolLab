@@ -7,10 +7,12 @@ import { Suspense, useState } from "react";
 
 import styles from "./site-header.module.css";
 
+
 const navigation = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Tests", href: "/tests" },
+  { label: "AI Assistant", href: "/assistant" },
   { label: "Packages", href: "/packages" },
   { label: "Home Sampling", href: "/home-sampling" },
   { label: "Branches", href: "/branches" },

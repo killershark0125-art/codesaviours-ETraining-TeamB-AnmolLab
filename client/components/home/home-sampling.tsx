@@ -46,7 +46,7 @@ export default function HomeSampling() {
             </h2>
 
             <p className={styles.description}>
-              Visiting the laboratory isn't always convenient.
+              Visiting the laboratory isn&apos;t always convenient.
               Request a home sample collection by sharing your
               address and preferred time. The team will confirm
               availability and guide you through the next steps.

@@ -27,7 +27,7 @@ export default function NotFound() {
           <p className={styles.description}>
             The page you are looking for may have moved, no longer
             exists, or the address may have been entered incorrectly.
-            Let's help you find your way back.
+            Let&apos;s help you find your way back.
           </p>
 
           <div className={styles.actions}>

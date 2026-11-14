@@ -31,7 +31,7 @@ export default function ErrorPage({
         </span>
 
         <h1 className={styles.title}>
-          Something didn't go <em>as expected.</em>
+          Something didn&apos;t go <em>as expected.</em>
         </h1>
 
         <p className={styles.description}>

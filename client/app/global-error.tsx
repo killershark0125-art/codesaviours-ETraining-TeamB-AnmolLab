@@ -32,7 +32,7 @@ export default function GlobalError({
             </span>
 
             <h1 className={styles.title}>
-              We're having a little <em>technical trouble.</em>
+              We&apos;re having a little <em>technical trouble.</em>
             </h1>
 
             <p className={styles.description}>
@@ -50,9 +50,9 @@ export default function GlobalError({
                 <span aria-hidden="true">↻</span>
               </button>
 
-              <a href="/" className={styles.secondaryAction}>
+              <link href="/" className={styles.secondaryAction}>
                 Go to homepage
-              </a>
+              </link>
             </div>
           </section>
         </main>

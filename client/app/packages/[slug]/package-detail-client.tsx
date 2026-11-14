@@ -1,351 +1,341 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import SiteHeader from "@/components/layout/site-header";
-import SiteFooter from "@/components/layout/site-footer";
-
 import { getHealthPackages } from "@/lib/api/packages";
 import { formatPrice } from "@/lib/format";
-import { siteConfig } from "@/lib/site";
-
 import type { HealthPackage } from "@/lib/types";
 
-import styles from "./package-detail.module.css";
+type PackageDetailClientProps = {
+  slug: string;
+};
 
-type PageState =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "not-found" }
-  | { status: "success"; item: HealthPackage };
+type SettledRequest = {
+  key: string;
+  packageData: HealthPackage | null;
+  error: string | null;
+};
 
 export default function PackageDetailClient({
   slug,
-}: {
-  slug: string;
-}) {
-  const [state, setState] = useState<PageState>({
-    status: "loading",
-  });
+}: PackageDetailClientProps) {
+  const [settled, setSettled] = useState<SettledRequest | null>(null);
   const [attempt, setAttempt] = useState(0);
+
+  const requestKey = `${attempt}:${slug}`;
 
   useEffect(() => {
     const controller = new AbortController();
-
-    setState({ status: "loading" });
 
     getHealthPackages(controller.signal)
       .then((result) => {
         if (controller.signal.aborted) return;
 
-        const item = result.items.find(
-          (entry) =>
-            entry.slug === slug &&
-            entry.isActive === true,
-        );
+        const packageData =
+          result.items.find((item) => item.slug === slug) ?? null;
 
-        setState(
-          item
-            ? { status: "success", item }
-            : { status: "not-found" },
-        );
+        setSettled({
+          key: requestKey,
+          packageData,
+          error: null,
+        });
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
 
-        setState({
-          status: "error",
-          message:
+        setSettled({
+          key: requestKey,
+          packageData: null,
+          error:
             error instanceof Error
               ? error.message
-              : "Package information could not be loaded.",
+              : "The package information could not be loaded.",
         });
       });
 
     return () => controller.abort();
-  }, [slug, attempt]);
+  }, [requestKey, slug]);
+
+  // The current request is loading until a matching response arrives.
+  const isLoading = settled?.key !== requestKey;
+
+  const packageData = isLoading ? null : settled?.packageData ?? null;
+  const errorMessage = isLoading ? null : settled?.error ?? null;
+
+  function retry() {
+    setAttempt((current) => current + 1);
+  }
 
   return (
-    <>
-      <SiteHeader />
+    <main className="min-h-screen bg-[#0c1020] text-[#f1f4fa]">
+      <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(ellipse_at_80%_10%,rgba(64,112,112,0.18),transparent_42%),linear-gradient(145deg,#10172a,#0c1020)] px-[5.5%] pb-16 pt-32">
+        <div className="relative mx-auto max-w-7xl">
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-10 flex items-center gap-3 text-xs text-slate-400"
+          >
+            <Link href="/" className="transition hover:text-white">
+              Home
+            </Link>
 
-      <main className={styles.page}>
-        <div className={styles.container}>
-          <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
             <span aria-hidden="true">/</span>
-            <Link href="/packages">Health packages</Link>
+
+            <Link
+              href="/packages"
+              className="transition hover:text-white"
+            >
+              Health packages
+            </Link>
+
             <span aria-hidden="true">/</span>
-            <span aria-current="page">
-              {state.status === "success"
-                ? state.item.name
-                : "Package details"}
-            </span>
+
+            <span className="text-slate-300">Package details</span>
           </nav>
 
-          {state.status === "loading" && (
-            <section className={styles.statePanel} role="status">
-              <span className={styles.spinner} aria-hidden="true" />
-              <h1>Loading package details</h1>
-              <p>
-                Retrieving the latest package information from the
-                laboratory catalogue.
-              </p>
-            </section>
-          )}
-
-          {state.status === "error" && (
-            <section className={styles.statePanel} role="alert">
-              <span className={styles.stateLabel}>
-                PACKAGE INFORMATION
-              </span>
-
-              <h1>We couldn't load this package.</h1>
-
-              <p>{state.message}</p>
-
-              <button
-                type="button"
-                className={styles.primaryButton}
-                onClick={() => setAttempt((current) => current + 1)}
-              >
-                Try again
-              </button>
-
-              <Link href="/packages" className={styles.textLink}>
-                Return to packages
-              </Link>
-            </section>
-          )}
-
-          {state.status === "not-found" && (
-            <section className={styles.statePanel}>
-              <span className={styles.stateLabel}>
-                PACKAGE NOT AVAILABLE
-              </span>
-
-              <h1>This package could not be found.</h1>
-
-              <p>
-                It may no longer be published, or its address may
-                have changed. Browse the current package catalogue
-                for available options.
-              </p>
-
-              <Link href="/packages" className={styles.primaryButton}>
-                Browse health packages
-              </Link>
-            </section>
-          )}
-
-          {state.status === "success" && (
-            <PackageContent item={state.item} />
-          )}
-        </div>
-      </main>
-
-      <SiteFooter />
-    </>
-  );
-}
-
-function PackageContent({ item }: { item: HealthPackage }) {
-  const hasPackagePrice = item.packagePrice !== null;
-  const hasOriginalPrice = item.originalPrice !== null;
-  const hasSavings = item.savings !== null && item.savings > 0;
-
-  const emailBody = [
-    `Hello ${siteConfig.name},`,
-    "",
-    `I would like to enquire about the ${item.name}.`,
-    "",
-    "Please confirm its current availability, included tests and final price.",
-    "",
-    "Thank you.",
-  ].join("\n");
-
-  const emailHref =
-    `mailto:${siteConfig.email}` +
-    `?subject=${encodeURIComponent(`Enquiry about ${item.name}`)}` +
-    `&body=${encodeURIComponent(emailBody)}`;
-
-  return (
-    <>
-      <section className={styles.hero}>
-        <div className={styles.heroCopy}>
-          <span className={styles.eyebrow}>
+          <span className="text-[10px] font-bold tracking-[0.18em] text-[#91bdb4]">
             ANMOL HEALTH CARE LAB / HEALTH PACKAGES
           </span>
 
-          <span className={styles.category}>LABORATORY PACKAGE</span>
+          {isLoading ? (
+            <div className="mt-7 max-w-2xl" role="status">
+              <div className="mb-4 h-3 w-36 animate-pulse rounded bg-white/10" />
+              <div className="mb-3 h-12 w-3/4 animate-pulse rounded bg-white/10" />
+              <div className="h-4 w-full animate-pulse rounded bg-white/10" />
+              <p className="mt-5 text-sm text-slate-400">
+                Loading package information...
+              </p>
+            </div>
+          ) : errorMessage ? (
+            <div className="mt-8 max-w-xl" role="alert">
+              <h1 className="font-serif text-4xl font-normal tracking-tight sm:text-5xl">
+                Package information is unavailable.
+              </h1>
 
-          <h1>{item.name}</h1>
+              <p className="mt-4 text-sm leading-7 text-slate-400">
+                {errorMessage}
+              </p>
 
-          <p>
-            {item.description ||
-              "View the included tests and available pricing information for this laboratory package."}
-          </p>
+              <button
+                type="button"
+                onClick={retry}
+                className="mt-7 rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/20 px-5 py-3 text-sm font-semibold text-[#c8e5dc] transition hover:bg-[#497f78]/35"
+              >
+                Try again
+              </button>
+            </div>
+          ) : !packageData ? (
+            <div className="mt-8 max-w-xl">
+              <span className="text-[10px] font-bold tracking-[0.16em] text-[#91bdb4]">
+                PACKAGE NOT FOUND
+              </span>
 
-          <div className={styles.heroMeta}>
-            <span>
-              {item.includedTests.length}{" "}
-              {item.includedTests.length === 1
-                ? "TEST INCLUDED"
-                : "TESTS INCLUDED"}
-            </span>
+              <h1 className="mt-4 font-serif text-4xl font-normal tracking-tight sm:text-5xl">
+                This package is not available.
+              </h1>
 
-            {item.discountPercentage > 0 && (
-              <span>{item.discountPercentage}% DISCOUNT</span>
-            )}
-          </div>
-        </div>
+              <p className="mt-4 text-sm leading-7 text-slate-400">
+                The requested package could not be found in the published
+                laboratory catalogue.
+              </p>
 
-        <aside className={styles.priceCard}>
-          <span className={styles.priceEyebrow}>PACKAGE PRICE</span>
+              <Link
+                href="/packages"
+                className="mt-7 inline-flex rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/20 px-5 py-3 text-sm font-semibold text-[#c8e5dc] transition hover:bg-[#497f78]/35"
+              >
+                Browse available packages
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-7 max-w-3xl">
+              <h1 className="font-serif text-5xl font-normal leading-[1.03] tracking-[-0.045em] sm:text-7xl">
+                {packageData.name}
+              </h1>
 
-          <strong className={styles.packagePrice}>
-            {hasPackagePrice
-              ? formatPrice(item.packagePrice!)
-              : "Price unavailable"}
-          </strong>
+              {packageData.description && (
+                <p className="mt-6 max-w-2xl text-sm leading-8 text-slate-300">
+                  {packageData.description}
+                </p>
+              )}
 
-          {hasOriginalPrice && (
-            <span className={styles.originalPrice}>
-              Regular total: {formatPrice(item.originalPrice!)}
-            </span>
-          )}
-
-          {hasSavings && (
-            <span className={styles.savings}>
-              Savings: {formatPrice(item.savings!)}
-            </span>
-          )}
-
-          <p>
-            Confirm the current package price and availability
-            with the laboratory before your visit.
-          </p>
-
-          <a
-            href={siteConfig.phones[0].href}
-            className={styles.primaryButton}
-          >
-            Call to enquire
-            <span aria-hidden="true">↗</span>
-          </a>
-
-          <a href={emailHref} className={styles.secondaryButton}>
-            Email about this package
-          </a>
-        </aside>
-      </section>
-
-      <section className={styles.testsSection}>
-        <div className={styles.sectionHeading}>
-          <div>
-            <span className={styles.sectionLabel}>
-              01 / PACKAGE CONTENTS
-            </span>
-
-            <h2>
-              What's <em>included.</em>
-            </h2>
-          </div>
-
-          <p>
-            The following tests are listed in the laboratory's
-            package catalogue.
-          </p>
-        </div>
-
-        {item.includedTests.length > 0 ? (
-          <div className={styles.testList}>
-            {item.includedTests.map((test, index) => (
-              <article className={styles.testItem} key={test.id}>
-                <span className={styles.testNumber}>
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
-                <div className={styles.testInfo}>
-                  <h3>{test.name}</h3>
-                  <span>Included laboratory test</span>
-                </div>
-
-                <div className={styles.testPrice}>
-                  <strong>
-                    {test.price === null
-                      ? "Price pending"
-                      : formatPrice(test.price)}
-                  </strong>
-
-                  <span>
-                    {test.priceStatus === "confirmed"
-                      ? "CONFIRMED PRICE"
-                      : "TO BE CONFIRMED"}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/book"
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-6 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40"
+                >
+                  Continue to booking
+                  <span className="ml-3" aria-hidden="true">
+                    ↗
                   </span>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.emptyTests}>
-            <h3>Included test details are not available.</h3>
-            <p>
-              Contact the laboratory for the current package
-              contents and clarification.
-            </p>
-          </div>
-        )}
-      </section>
+                </Link>
 
-      <section className={styles.information}>
-        <div className={styles.informationGrid}>
-          <div>
-            <span className={styles.sectionLabel}>
-              02 / BEFORE YOUR VISIT
-            </span>
-
-            <h2>
-              Confirm the details <em>first.</em>
-            </h2>
-
-            <p>
-              Package availability, included tests, preparation
-              requirements and pricing can be confirmed directly
-              with the laboratory.
-            </p>
-          </div>
-
-          <div className={styles.informationCard}>
-            <span>NEED HELP WITH THIS PACKAGE?</span>
-
-            <a href={siteConfig.phones[0].href}>
-              {siteConfig.phones[0].display}
-            </a>
-
-            <a href={`mailto:${siteConfig.email}`}>
-              {siteConfig.email}
-            </a>
-
-            <Link href="/contact">
-              Contact information
-              <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
+                <Link
+                  href="/packages"
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 px-6 text-sm font-medium text-slate-300 transition hover:bg-white/5"
+                >
+                  All packages
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      <div className={styles.bottomActions}>
-        <Link href="/packages" className={styles.textLink}>
-          ← Back to all packages
-        </Link>
+      {packageData && !isLoading && !errorMessage && (
+        <section className="px-[5.5%] py-16 sm:py-20">
+          <div className="mx-auto grid max-w-7xl gap-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.7fr)]">
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] p-6 sm:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
+                <div>
+                  <span className="text-[10px] font-bold tracking-[0.17em] text-[#91bdb4]">
+                    PACKAGE CONTENTS
+                  </span>
 
-        <Link href="/book" className={styles.bookingLink}>
-          Continue to test booking
-          <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
-    </>
+                  <h2 className="mt-2 font-serif text-3xl font-normal text-slate-100">
+                    Included tests
+                  </h2>
+                </div>
+
+                <span className="rounded-full border border-white/10 px-3 py-2 text-xs text-slate-300">
+                  {packageData.includedTests.length}{" "}
+                  {packageData.includedTests.length === 1 ? "test" : "tests"}
+                </span>
+              </div>
+
+              {packageData.includedTests.length > 0 ? (
+                <ul className="mt-3 divide-y divide-white/[0.08]">
+                  {packageData.includedTests.map((test, index) => (
+                    <li
+                      key={test.id}
+                      className="flex items-center justify-between gap-4 py-5"
+                    >
+                      <div className="flex min-w-0 items-center gap-4">
+                        <span className="text-xs tabular-nums text-slate-500">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        <div className="min-w-0">
+                          <h3 className="text-sm font-medium text-slate-100">
+                            {test.name}
+                          </h3>
+
+                          <span className="mt-1 block text-[10px] text-slate-500">
+                            {test.priceStatus === "confirmed" &&
+                            test.price !== null
+                              ? "Published catalogue price"
+                              : "Price pending confirmation"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className="shrink-0 text-xs text-slate-300">
+                        {test.priceStatus === "confirmed" &&
+                        test.price !== null
+                          ? formatPrice(test.price)
+                          : "Not confirmed"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="py-8 text-sm leading-7 text-slate-400">
+                  Included test details have not been published for this
+                  package yet. Please contact Anmol Lab for confirmation.
+                </p>
+              )}
+            </div>
+
+            <aside className="h-fit rounded-3xl border border-white/10 bg-[linear-gradient(145deg,rgba(31,39,66,0.78),rgba(15,20,36,0.92))] p-6 sm:p-7">
+              <span className="text-[10px] font-bold tracking-[0.17em] text-[#91bdb4]">
+                PACKAGE PRICING
+              </span>
+
+              <h2 className="mt-3 font-serif text-3xl font-normal text-slate-100">
+                Package overview
+              </h2>
+
+              <div className="mt-8 space-y-5">
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <span className="text-xs text-slate-400">
+                    Regular total
+                  </span>
+
+                  <strong className="text-sm font-medium text-slate-200">
+                    {packageData.originalPrice !== null
+                      ? formatPrice(packageData.originalPrice)
+                      : "Unavailable"}
+                  </strong>
+                </div>
+
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <span className="text-xs text-slate-400">
+                    Package price
+                  </span>
+
+                  <strong className="text-sm font-semibold text-[#c8e5dc]">
+                    {packageData.packagePrice !== null
+                      ? formatPrice(packageData.packagePrice)
+                      : "Price unavailable"}
+                  </strong>
+                </div>
+
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-xs text-slate-400">
+                    Published discount
+                  </span>
+
+                  <strong className="text-sm font-medium text-slate-200">
+                    {packageData.discountPercentage > 0
+                      ? `${packageData.discountPercentage}%`
+                      : "—"}
+                  </strong>
+                </div>
+              </div>
+
+              {packageData.savings !== null && packageData.savings > 0 && (
+                <div className="mt-7 rounded-xl border border-[#91bdb4]/20 bg-[#497f78]/10 px-4 py-3">
+                  <span className="text-[10px] font-bold tracking-[0.13em] text-[#91bdb4]">
+                    PACKAGE SAVINGS
+                  </span>
+
+                  <strong className="mt-1 block text-lg font-semibold text-[#d2eae1]">
+                    {formatPrice(packageData.savings)}
+                  </strong>
+                </div>
+              )}
+
+              <p className="mt-7 text-[11px] leading-7 text-slate-400">
+                Prices are displayed according to the published laboratory
+                catalogue. Confirm package availability and details with
+                Anmol Lab before booking.
+              </p>
+
+              <Link
+                href="/book"
+                className="mt-6 flex min-h-12 items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-4 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40"
+              >
+                Continue to booking
+              </Link>
+
+              <Link
+                href="/contact"
+                className="mt-3 flex min-h-11 items-center justify-center rounded-xl border border-white/10 px-4 text-xs font-medium text-slate-300 transition hover:bg-white/5"
+              >
+                Ask the laboratory
+              </Link>
+            </aside>
+          </div>
+
+          <div className="mx-auto mt-7 max-w-7xl border-t border-white/10 pt-5">
+            <p className="text-[10px] leading-6 text-slate-500">
+              Package information is provided for general reference and is
+              not medical advice. Discuss test selection with your treating
+              healthcare professional.
+            </p>
+          </div>
+        </section>
+      )}
+    </main>
   );
 }
