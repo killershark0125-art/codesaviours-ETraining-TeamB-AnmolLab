@@ -26,7 +26,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
+app.get("/api/health", (req, res) => {
+  const dbStatus = require("mongoose").connection.readyState;
 
+  res.status(dbStatus === 1 ? 200 : 503).json({
+    success: dbStatus === 1,
+    message: dbStatus === 1
+      ? "API and database are healthy"
+      : "Database is not connected",
+    database: dbStatus === 1 ? "connected" : "disconnected"
+  });
+});
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/tests", testRoutes);

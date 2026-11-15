@@ -18,6 +18,14 @@ const validatePackageData = (data) => {
         errors.push("At least one test must be included");
     }
 
+    if (Array.isArray(data.includedTests)) {
+    const testIds = data.includedTests.map(id => id.toString());
+
+    if (new Set(testIds).size !== testIds.length) {
+        errors.push("Duplicate tests are not allowed in a package");
+    }
+}
+
     if (data.discountPercentage !== undefined) {
         const discount = Number(data.discountPercentage);
 

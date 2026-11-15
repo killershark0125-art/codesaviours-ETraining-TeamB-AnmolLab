@@ -12,7 +12,7 @@ const createPost = async (req, res) => {
         const validation = validatePostData(req.body);
 
         if (!validation.isValid) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors: validation.errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors: validation.errors });
         }
 
         const slug = generatePostSlug(title);
@@ -43,14 +43,6 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
     try {
         const filter = {isPublished: true };
-
-        if (req.query.isPublished !== undefined) {
-            if (!["true", "false"].includes(req.query.isPublished)) {
-                return responseHandler(res,StatusCodes.BAD_REQUEST,"isPublished must be true or false");
-            }
-
-            filter.isPublished = req.query.isPublished === "true";
-        }
 
         const posts = await Post.find(filter).sort({ createdAt: -1 });
 
@@ -89,6 +81,28 @@ const getPostById = async (req, res) => {
 };
 
 
+const getPostBySlug = async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        const post = await Post.findOne({
+            slug: slug.toLowerCase().trim(),
+            isPublished: true
+        });
+
+        if (!post) {
+            return responseHandler(res,StatusCodes.NOT_FOUND,"Blog post not found");
+        }
+
+        return responseHandler(res,StatusCodes.SUCCESS,"Blog post retrieved successfully",post);
+
+    } catch (error) {
+        console.error("Get post by slug error:", error);
+
+        return responseHandler(res,StatusCodes.SERVER_ERROR,"Failed to retrieve blog post");
+    }
+};
+
 
 const updatePost = async (req, res) => {
     try {
@@ -114,13 +128,7 @@ const updatePost = async (req, res) => {
       const validation = validatePostData(mergedData);
 
 if (!validation.isValid) {
-    return responseHandler(
-        res,
-        StatusCodes.BAD_REQUEST,
-        "Validation failed",
-        null,
-        { errors: validation.errors }
-    );
+    return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors: validation.errors });
 }
 
         const updateData = { ...req.body };
@@ -182,4 +190,4 @@ const deletePost = async (req, res) => {
 };
 
 
-module.exports = {createPost,getAllPosts,getPostById,updatePost,deletePost};
+module.exports = {createPost,getAllPosts,getPostById,getPostBySlug, updatePost,deletePost};

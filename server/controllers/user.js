@@ -78,6 +78,9 @@ const registerUser = async (req, res) => {
 
     } catch (error) {
         console.error("Registration error:", error.message);
+        if (error.code === 11000) {
+        return responseHandler(res,StatusCodes.CONFLICT,"Email is already registered");
+}
         return responseHandler(res, StatusCodes.SERVER_ERROR, "Server error during registration");
     }
 };

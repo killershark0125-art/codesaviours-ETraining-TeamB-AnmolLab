@@ -50,7 +50,7 @@ const createPackage = async (req, res) => {
         const errors = validatePackageData(req.body);
 
         if (errors.length > 0) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors });
         }
 
         const {name,description = "",includedTests,discountPercentage = 0,isActive = true} = req.body;
@@ -160,7 +160,7 @@ const updatePackage = async (req, res) => {
         });
 
         if (errors.length > 0) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors });
         }
 
         if (updateData.name !== undefined) {

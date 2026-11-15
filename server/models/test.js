@@ -19,6 +19,7 @@ const testSchema = new mongoose.Schema(
             type: String,
             trim: true,
             uppercase: true,
+            unique:true,
             sparse: true,
         },
         category: {
