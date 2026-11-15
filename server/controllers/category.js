@@ -30,7 +30,7 @@ const createCategory = async (req, res)=>{
  
 const getAllCategories = async (req, res)=>{
     try{
-        const categories = await Category.find().sort({createdAt: -1});
+        const categories = await Category.find({ isActive: true }).sort({createdAt: -1});
         return responseHandler(res, StatusCodes.SUCCESS, "Categories fetched successfully",categories, { count: categories.length });
     }catch(error){
         return responseHandler(res, StatusCodes.SERVER_ERROR, "Error fetching categories");
@@ -41,7 +41,10 @@ const getAllCategories = async (req, res)=>{
 const getCategoryById = async (req, res)=>{
     try{
         const {id} = req.params;
-        const category = await Category.findById(id);
+        const category = await Category.findOne({
+             _id: id,
+             isActive: true
+});
         if(!category){
             return responseHandler(res, StatusCodes.NOT_FOUND, "Category not found");
         }
@@ -56,7 +59,7 @@ const updateCategory = async (req, res)=>{
         const {name, description, isActive} = req.body;
         const updateData = {};
         if(typeof name !== "undefined"){
-            if(!name.trim()){
+            if(typeof name !== "string" || !name.trim()){
                 return responseHandler(res, StatusCodes.BAD_REQUEST, "Category name must be a valid string");
             }
             updateData.name = name.trim();

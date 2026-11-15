@@ -1,6 +1,6 @@
 
 const Branch = require("../models/branch");
-const {generateBranchSlug,validateBranchData} = require("../validations/branchValidation");
+const {generateBranchSlug,validateBranchData,validateBranchUpdateData} = require("../validations/branchValidation");
 
 const responseHandler = require("../utils/responseHandler");
 const { StatusCodes } = require("../consts/statusCode");
@@ -39,7 +39,7 @@ const createBranch = async (req, res) => {
 
 const getAllBranches = async (req, res) => {
     try {
-        const branches = await Branch.find().sort({ createdAt: -1 });
+        const branches = await Branch.find({ isActive: true }).sort({ createdAt: -1 });
 
         return responseHandler(res,StatusCodes.SUCCESS,"Branches fetched successfully",branches);
     } catch (error) {
@@ -56,7 +56,10 @@ const getBranchById = async (req, res) => {
             return responseHandler(res, StatusCodes.BAD_REQUEST, "Invalid branch ID");
         }
 
-        const branch = await Branch.findById(id);
+        const branch = await Branch.findOne({
+             _id: id,
+             isActive: true
+          });
 
         if (!branch) {
             return responseHandler(res,StatusCodes.NOT_FOUND,"Branch not found");
@@ -77,45 +80,61 @@ const updateBranch = async (req, res) => {
             return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid branch ID");
         }
 
-        const errors = validateBranchData(req.body);
+        const branch = await Branch.findById(id);
 
-        if (errors.length > 0) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors });
+        if (!branch) {
+            return responseHandler(res,StatusCodes.NOT_FOUND,"Branch not found");
         }
 
-        const { name, address, phone, timings, mapEmbedUrl, directionsUrl, isActive } = req.body;
+        const errors = validateBranchUpdateData(req.body);
 
-        const slug = generateBranchSlug(name);
+        if (errors.length > 0) {
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors });
+        }
+
+        const updateData = { ...req.body };
+
+if (updateData.name !== undefined) {
+    updateData.name = updateData.name.trim();
+    updateData.slug = generateBranchSlug(updateData.name);
+}
 
         const existingBranch = await Branch.findOne({
             _id: { $ne: id },
-            $or: [{ name: name.trim() }, { slug }]
+            ...(updateData.name !== undefined
+                ? {
+                    $or: [
+                        { name: updateData.name.trim() },
+                        { slug: updateData.slug }
+                    ]
+                }
+                : {})
         });
 
         if (existingBranch) {
             return responseHandler(res,StatusCodes.ALREADY_EXIST,"Another branch with this name already exists");
         }
 
-        const branch = await Branch.findByIdAndUpdate(
+        const updatedBranch = await Branch.findByIdAndUpdate(
             id,
-            {name,slug,address,phone,timings,mapEmbedUrl,directionsUrl,isActive},
+            updateData,
             {
-                returnDocument: "after",
+                new: true,
                 runValidators: true
             }
         );
 
-        if (!branch) {
-            return responseHandler(res,StatusCodes.NOT_FOUND,"Branch not found");
-        }
-
-        return responseHandler(res,StatusCodes.SUCCESS,"Branch updated successfully",branch);
+        return responseHandler(res,StatusCodes.SUCCESS,"Branch updated successfully",updatedBranch );
     } catch (error) {
         if (error.code === 11000) {
-            return responseHandler(res,StatusCodes.ALREADY_EXIST,"Branch name or slug already exists");
+            return responseHandler(res,StatusCodes.ALREADY_EXIST,"Branch name or slug already exists"
+            );
         }
 
-        return responseHandler(res,StatusCodes.SERVER_ERROR,"Failed to update branch",null,{ error: error.message });
+        console.error("Update branch error:", error);
+
+        return responseHandler(res,StatusCodes.SERVER_ERROR,"Failed to update branch"
+        );
     }
 };
 

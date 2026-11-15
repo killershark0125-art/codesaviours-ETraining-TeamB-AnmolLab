@@ -100,10 +100,17 @@ Backend startup instructions will be added when the server entry point and start
 - Added request validation for backend modules.
 - Tested backend API functionality.
 - Created API documentation in `docs/API_DOCUMENTATION.md`.
+- Implemented chatbot rate limiting with a maximum of 20 messages per hour per identity.
+- Added guest session identification using HTTP-only cookies and authenticated user identification using MongoDB user IDs.
+- Integrated optional JWT authentication to allow both guests and logged-in users to access the chatbot.
+- Tested rate-limit enforcement for guest and authenticated users, including HTTP 429 responses.
+
 
 ### Technologies Used
 
-Node.js, Express.js, MongoDB, Mongoose, JavaScript, Multer, CSV Parser, Git and GitHub.
+Node.js, Express.js, MongoDB, Mongoose, JavaScript, Multer, CSV Parser, Git and GitHub.- express-rate-limit
+- cookie-parser
+- JSON Web Token (JWT)
 
 ### Git Branch
 

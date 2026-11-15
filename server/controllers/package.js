@@ -50,7 +50,7 @@ const createPackage = async (req, res) => {
         const errors = validatePackageData(req.body);
 
         if (errors.length > 0) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors });
         }
 
         const {name,description = "",includedTests,discountPercentage = 0,isActive = true} = req.body;
@@ -100,7 +100,7 @@ const createPackage = async (req, res) => {
 
 const getAllPackages = async (req, res) => {
     try {
-        const packages = await Package.find()
+        const packages = await Package.find({ isActive: true })
             .populate("includedTests", "name slug price priceStatus")
             .sort({ createdAt: -1 });
 
@@ -118,7 +118,10 @@ const getPackageById = async (req, res) => {
             return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid package ID");
         }
 
-        const packageData = await Package.findById(req.params.id)
+        const packageData = await Package.findOne({
+               _id: req.params.id,
+               isActive: true
+})
             .populate("includedTests", "name slug price priceStatus");
 
         if (!packageData) {
@@ -157,7 +160,7 @@ const updatePackage = async (req, res) => {
         });
 
         if (errors.length > 0) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors });
         }
 
         if (updateData.name !== undefined) {

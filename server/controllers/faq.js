@@ -26,7 +26,7 @@ const createFAQ = async (req, res) => {
 
 const getAllFAQs = async (req, res) => {
     try {
-        const faqs = await FAQ.find().sort({ createdAt: -1 });
+        const faqs = await FAQ.find({ isActive: true }).sort({ createdAt: -1 });
 
         return responseHandler(res,StatusCodes.SUCCESS,"FAQs fetched successfully",faqs);
     } catch (error) {
@@ -38,7 +38,13 @@ const getAllFAQs = async (req, res) => {
 
 const getFAQById = async (req, res) => {
     try {
-        const faq = await FAQ.findById(req.params.id);
+        if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid FAQ ID");
+                }
+         const faq = await FAQ.findOne({
+             _id: req.params.id,
+             isActive: true
+        });
 
         if (!faq) {
             return responseHandler(res,StatusCodes.NOT_FOUND,"FAQ not found");
@@ -55,6 +61,9 @@ const getFAQById = async (req, res) => {
 
 const updateFAQ = async (req, res) => {
     try {
+        if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+    return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid FAQ ID");
+}
         const faq = await FAQ.findById(req.params.id);
 
         if (!faq) {
@@ -90,6 +99,9 @@ const updateFAQ = async (req, res) => {
 
 const deleteFAQ = async (req, res) => {
     try {
+       if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+               return responseHandler(res,StatusCodes.BAD_REQUEST,"Invalid FAQ ID");
+             }
         const faq = await FAQ.findById(req.params.id);
 
         if (!faq) {

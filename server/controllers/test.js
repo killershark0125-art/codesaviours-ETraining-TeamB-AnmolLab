@@ -9,11 +9,11 @@ const { Readable } = require("stream");
 
 const createTest = async (req, res) => {
     try{
-        const {name,description,category,sampleType,preparationInstructions,turnaroundTime,price,priceStatus} = req.body;
+        const {name,code,description,category,sampleType,preparationInstructions,turnaroundTime,price,priceStatus} = req.body;
         const validation = validateTestData(req.body);
 
         if(!validation.isValid){
-            return responseHandler(res, StatusCodes.BAD_REQUEST, "Validation failed", null, {errors: validation.errors});
+            return responseHandler(res, StatusCodes.BAD_REQUEST, "Validation failed",  {errors: validation.errors});
         }
         const categoryExists = await Category.findById(category);
         if(!categoryExists){
@@ -22,6 +22,7 @@ const createTest = async (req, res) => {
         const slug = generateTestSlug(name);
         const test = await Test.create({
             name:name.trim(),
+            code: code ? code.trim().toUpperCase() : undefined,
             slug,
             description,
             category,
@@ -46,10 +47,10 @@ const createTest = async (req, res) => {
 
 const getAllTests = async(req,res)=>{
     try{
-         const {search,category,isActive,page = 1,limit = 10} = req.query;
+         const {search,category,page = 1,limit = 10} = req.query;
          const pageNumber = Math.max(1, parseInt(page, 10) || 1);
          const limitNumber = Math.min(100,Math.max(1, parseInt(limit, 10) || 10));
-         const filter = {};
+         const filter = {isActive: true };
          if (search && search.trim()) {
 
          const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -64,12 +65,6 @@ const getAllTests = async(req,res)=>{
             }
             filter.category = category;
         };
-        if (isActive !== undefined) {
-            if (!["true", "false"].includes(isActive)) {
-                return responseHandler(res,StatusCodes.BAD_REQUEST,"isActive must be true or false");
-            }
-            filter.isActive = isActive === "true";
-        }
         const skip = (pageNumber - 1) * limitNumber;
         const [tests, totalTests] = await Promise.all([Test.find(filter)
                 .populate("category", "name")
@@ -105,7 +100,10 @@ const getTestById = async(req,res)=>{
         if(!require("mongoose").Types.ObjectId.isValid(id)){
             return responseHandler(res, StatusCodes.BAD_REQUEST, "Invalid test ID");
         }
-        const test = await Test.findById(id)
+        const test = await Test.findOne({
+            _id: id,
+            isActive: true 
+        })
         .populate("category","name");
         if(!test){
             return responseHandler(res, StatusCodes.NOT_FOUND, "Test not found");
@@ -117,6 +115,40 @@ const getTestById = async(req,res)=>{
     }
 };
 
+const getTestBySlug = async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        const test = await Test.findOne({
+            slug: slug.toLowerCase().trim(),
+            isActive: true
+        }).populate("category", "name");
+
+        if (!test) {
+            return responseHandler(
+                res,
+                StatusCodes.NOT_FOUND,
+                "Test not found"
+            );
+        }
+
+        return responseHandler(
+            res,
+            StatusCodes.SUCCESS,
+            "Test fetched successfully",
+            test
+        );
+
+    } catch (error) {
+        console.error("Get test by slug error:", error);
+
+        return responseHandler(
+            res,
+            StatusCodes.SERVER_ERROR,
+            "Failed to fetch test"
+        );
+    }
+};
 
 const updateTest = async (req, res) => {
     try {
@@ -130,7 +162,7 @@ const updateTest = async (req, res) => {
         const existingTest = await Test.findById(id);
 
         if (!existingTest) {
-            return responseHandler(res,StatusCodes.NOT_FOUND,"Test not found");
+            return responseHandler(res,StatusCodes.NOT_FOUND,"Test not found")  ;
         }
 
         if (Object.keys(req.body).length === 0) {
@@ -145,7 +177,7 @@ const updateTest = async (req, res) => {
         const validation = validateTestData(updatedData);
 
         if (!validation.isValid) {
-            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",null,{ errors: validation.errors });
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Validation failed",{ errors: validation.errors });
         }
 
         if (req.body.category) {
@@ -166,7 +198,11 @@ const updateTest = async (req, res) => {
             updateData.name = req.body.name.trim();
             updateData.slug = generateTestSlug(req.body.name);
         }
-
+        if (req.body.code !== undefined) {
+            updateData.code = req.body.code
+        ? req.body.code.trim().toUpperCase()
+        : undefined;
+}
         const test = await Test.findByIdAndUpdate(
             id,
             updateData,
@@ -244,22 +280,11 @@ const importTestsFromCSV = async (req, res) => {
         );
 
         if (missingColumns.length > 0) {
-            return responseHandler(
-                res,
-                StatusCodes.BAD_REQUEST,
-                "Missing required CSV columns",
-                null,
-                { missingColumns }
+            return responseHandler(res,StatusCodes.BAD_REQUEST,"Missing required CSV columns",{ missingColumns }
             );
         }
 
-        const report = {
-            totalRows: rows.length,
-            imported: 0,
-            duplicates: 0,
-            invalid: 0,
-            errors: []
-        };
+        const report = {totalRows: rows.length,imported: 0,duplicates: 0,invalid: 0,errors: []};
 
         for (let index = 0; index < rows.length; index++) {
             const row = rows[index];
@@ -371,4 +396,4 @@ const importTestsFromCSV = async (req, res) => {
 };
 
 
-module.exports = {createTest,getAllTests,getTestById,updateTest,deleteTest, importTestsFromCSV};
+module.exports = {createTest,getAllTests,getTestById, getTestBySlug,updateTest,deleteTest, importTestsFromCSV};
