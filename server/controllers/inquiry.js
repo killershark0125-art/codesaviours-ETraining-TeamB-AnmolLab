@@ -44,6 +44,13 @@ const getAllInquiries = async (req, res) => {
 
 const getInquiryById = async (req, res) => {
     try {
+        if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+    return responseHandler(
+        res,
+        StatusCodes.BAD_REQUEST,
+        "Invalid inquiry ID"
+    );
+}
         const inquiry = await Inquiry.findById(req.params.id);
 
         if (!inquiry) {
@@ -60,6 +67,13 @@ const getInquiryById = async (req, res) => {
 
 const updateInquiry = async (req, res) => {
     try {
+        if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+    return responseHandler(
+        res,
+        StatusCodes.BAD_REQUEST,
+        "Invalid inquiry ID"
+    );
+}
         const inquiry = await Inquiry.findById(req.params.id);
 
         if (!inquiry) {
@@ -100,6 +114,13 @@ const updateInquiry = async (req, res) => {
 
 const deleteInquiry = async (req, res) => {
     try {
+        if (!require("mongoose").Types.ObjectId.isValid(req.params.id)) {
+    return responseHandler(
+        res,
+        StatusCodes.BAD_REQUEST,
+        "Invalid inquiry ID"
+    );
+}
         const inquiry = await Inquiry.findById(req.params.id);
 
         if (!inquiry) {
