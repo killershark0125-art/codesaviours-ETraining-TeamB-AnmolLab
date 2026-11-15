@@ -5,6 +5,9 @@ dotenv.config();
 const connectDB = require("./config/db");
 const createTestIndexes = require("./config/testIndexes");
 const cookieParser = require("cookie-parser");
+const createSlotIndexes = require("./config/slotIndexes");
+const createBookingIndexes = require("./config/bookingIndexes");
+const createHomeSamplingAreaIndexes = require("./config/homeSamplingAreaIndexes");
 
 
 const app = express();
@@ -19,6 +22,9 @@ const faqRoutes = require("./routes/faqRoutes");
 const inquiryRoutes = require("./routes/inquiryRoutes");
 const authRoutes = require("./routes/user.js");
 const chatbotRoutes = require("./routes/chatbotRoutes.js");
+const slotRoutes = require("./routes/slotRoutes.js");
+const homeSamplingAreaRoutes = require("./routes/homeSamplingArea");
+const bookingRoutes = require("./routes/bookingRoutes.js");
 
 
 app.use(cors());
@@ -45,14 +51,20 @@ app.use("/api/branches", branchRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/inquiries", inquiryRoutes);
-app.use("/api/auth", authRoutes)
-app.use("/api/chatbot", chatbotRoutes)
+app.use("/api/auth", authRoutes);
+app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/slots", slotRoutes);
+app.use("/api/home", homeSamplingAreaRoutes);
+app.use("/api/bookings",bookingRoutes);
 
 
 const startServer = async () => {
   try {
     await connectDB();
     await createTestIndexes();
+    await createSlotIndexes();
+    await createBookingIndexes();
+    await createHomeSamplingAreaIndexes();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
