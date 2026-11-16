@@ -6,6 +6,12 @@ import Link from "next/link";
 
 import { getHealthPackages } from "@/lib/api/packages";
 import { formatPrice } from "@/lib/format";
+
+import {
+  addPackageToCart,
+  usePackageCart,
+} from "@/lib/cart-store";
+
 import type { HealthPackage } from "@/lib/types";
 
 type PackageDetailClientProps = {
@@ -23,6 +29,9 @@ export default function PackageDetailClient({
 }: PackageDetailClientProps) {
   const [settled, setSettled] = useState<SettledRequest | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const [cartFeedback, setCartFeedback] = useState("");
+
+  const packageCart = usePackageCart();
 
   const requestKey = `${attempt}:${slug}`;
 
@@ -58,14 +67,35 @@ export default function PackageDetailClient({
     return () => controller.abort();
   }, [requestKey, slug]);
 
-  // The current request is loading until a matching response arrives.
   const isLoading = settled?.key !== requestKey;
 
-  const packageData = isLoading ? null : settled?.packageData ?? null;
-  const errorMessage = isLoading ? null : settled?.error ?? null;
+  const packageData = isLoading
+    ? null
+    : settled?.packageData ?? null;
+
+  const errorMessage = isLoading
+    ? null
+    : settled?.error ?? null;
+
+  const isInCart = packageData
+    ? packageCart.some((item) => item.id === packageData.id)
+    : false;
 
   function retry() {
+    setCartFeedback("");
     setAttempt((current) => current + 1);
+  }
+
+  function handleAddPackage() {
+    if (!packageData) return;
+
+    const added = addPackageToCart(packageData);
+
+    setCartFeedback(
+      added
+        ? `${packageData.name} has been added to your cart.`
+        : `${packageData.name} is already in your cart.`,
+    );
   }
 
   return (
@@ -103,6 +133,7 @@ export default function PackageDetailClient({
               <div className="mb-4 h-3 w-36 animate-pulse rounded bg-white/10" />
               <div className="mb-3 h-12 w-3/4 animate-pulse rounded bg-white/10" />
               <div className="h-4 w-full animate-pulse rounded bg-white/10" />
+
               <p className="mt-5 text-sm text-slate-400">
                 Loading package information...
               </p>
@@ -160,15 +191,14 @@ export default function PackageDetailClient({
               )}
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link
-                  href="/book"
-                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-6 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40"
+                <button
+                  type="button"
+                  onClick={handleAddPackage}
+                  disabled={isInCart}
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-6 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Continue to booking
-                  <span className="ml-3" aria-hidden="true">
-                    ↗
-                  </span>
-                </Link>
+                  {isInCart ? "Package added ✓" : "Add package to cart"}
+                </button>
 
                 <Link
                   href="/packages"
@@ -293,17 +323,18 @@ export default function PackageDetailClient({
                 </div>
               </div>
 
-              {packageData.savings !== null && packageData.savings > 0 && (
-                <div className="mt-7 rounded-xl border border-[#91bdb4]/20 bg-[#497f78]/10 px-4 py-3">
-                  <span className="text-[10px] font-bold tracking-[0.13em] text-[#91bdb4]">
-                    PACKAGE SAVINGS
-                  </span>
+              {packageData.savings !== null &&
+                packageData.savings > 0 && (
+                  <div className="mt-7 rounded-xl border border-[#91bdb4]/20 bg-[#497f78]/10 px-4 py-3">
+                    <span className="text-[10px] font-bold tracking-[0.13em] text-[#91bdb4]">
+                      PACKAGE SAVINGS
+                    </span>
 
-                  <strong className="mt-1 block text-lg font-semibold text-[#d2eae1]">
-                    {formatPrice(packageData.savings)}
-                  </strong>
-                </div>
-              )}
+                    <strong className="mt-1 block text-lg font-semibold text-[#d2eae1]">
+                      {formatPrice(packageData.savings)}
+                    </strong>
+                  </div>
+                )}
 
               <p className="mt-7 text-[11px] leading-7 text-slate-400">
                 Prices are displayed according to the published laboratory
@@ -311,9 +342,35 @@ export default function PackageDetailClient({
                 Anmol Lab before booking.
               </p>
 
+              <button
+                type="button"
+                onClick={handleAddPackage}
+                disabled={isInCart}
+                className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-4 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isInCart ? "Package added ✓" : "Add package to cart"}
+              </button>
+
+              {cartFeedback && (
+                <p
+                  className="mt-3 text-center text-xs text-[#b6dbd0]"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {cartFeedback}
+                </p>
+              )}
+
+              <Link
+                href="/cart"
+                className="mt-3 flex min-h-11 items-center justify-center rounded-xl border border-white/10 px-4 text-xs font-medium text-slate-300 transition hover:bg-white/5"
+              >
+                Review cart
+              </Link>
+
               <Link
                 href="/book"
-                className="mt-6 flex min-h-12 items-center justify-center rounded-xl border border-[#91bdb4]/40 bg-[#497f78]/25 px-4 text-sm font-semibold text-[#d5eee5] transition hover:bg-[#497f78]/40"
+                className="mt-2 flex min-h-11 items-center justify-center rounded-xl border border-white/10 px-4 text-xs font-medium text-slate-300 transition hover:bg-white/5"
               >
                 Continue to booking
               </Link>

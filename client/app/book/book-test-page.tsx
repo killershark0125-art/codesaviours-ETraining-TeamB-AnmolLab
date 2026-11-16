@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import {
+  useEffect,
   useId,
   useState,
   type FormEvent,
@@ -10,18 +11,27 @@ import {
 
 import SiteHeader from "@/components/layout/site-header";
 import SiteFooter from "@/components/layout/site-footer";
+import PackageSelectionPanel from "@/components/cart/package-selection-panel";
+
+import {
+  addTestToCart,
+  removeTestFromCart,
+  useCart,
+} from "@/lib/cart-store";
 
 import { getApiBaseUrl } from "@/lib/api/http";
+import { getBranches } from "@/lib/api/branches";
 import { RESULT_LIMIT } from "@/lib/api/tests";
 import { formatPrice } from "@/lib/format";
 import { useTestSearch } from "@/lib/hooks/use-test-search";
-import { siteConfig } from "@/lib/site";
 
-import type { TestSummary } from "@/lib/types";
+import type { Branch } from "@/lib/types";
 
 import styles from "./book-test.module.css";
 
 type CollectionMethod = "branch" | "home";
+
+type BranchRequestStatus = "idle" | "loading" | "success" | "error";
 
 type BookingForm = {
   name: string;
@@ -30,6 +40,7 @@ type BookingForm = {
   date: string;
   timePreference: string;
   method: CollectionMethod;
+  branchId: string;
   address: string;
   notes: string;
   consent: boolean;
@@ -42,16 +53,25 @@ const initialForm: BookingForm = {
   date: "",
   timePreference: "No preference",
   method: "branch",
+  branchId: "",
   address: "",
   notes: "",
   consent: false,
 };
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error
+    ? error.message
+    : "The laboratory branches could not be loaded.";
+}
+
 export default function BookTestPageClient() {
   const searchId = useId();
 
-  // Do not display fallback/sample catalogue data.
   const apiConfigured = Boolean(getApiBaseUrl());
+
+  // Use the same cart as the rest of the website.
+  const selectedTests = useCart();
 
   const search = useTestSearch({
     initialLoad: true,
@@ -59,9 +79,14 @@ export default function BookTestPageClient() {
     limit: RESULT_LIMIT,
   });
 
-  const [selectedTests, setSelectedTests] = useState<TestSummary[]>([]);
   const [form, setForm] = useState<BookingForm>(initialForm);
   const [selectionError, setSelectionError] = useState("");
+
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [branchStatus, setBranchStatus] =
+    useState<BranchRequestStatus>("idle");
+  const [branchError, setBranchError] = useState<string | null>(null);
+  const [branchAttempt, setBranchAttempt] = useState(0);
 
   const result = search.result;
   const isLoading = search.status === "loading";
@@ -71,6 +96,37 @@ export default function BookTestPageClient() {
 
   const totalPages =
     result?.pagination.totalPages ?? 0;
+
+  const selectedBranch = branches.find(
+    (branch) => branch.id === form.branchId,
+  );
+
+  const branchesLoading =
+    apiConfigured &&
+    (branchStatus === "idle" || branchStatus === "loading");
+
+  useEffect(() => {
+    if (!apiConfigured) return;
+
+    const controller = new AbortController();
+
+    getBranches(controller.signal)
+      .then((items) => {
+        if (controller.signal.aborted) return;
+
+        setBranches(items);
+        setBranchError(null);
+        setBranchStatus("success");
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+
+        setBranchError(getErrorMessage(error));
+        setBranchStatus("error");
+      });
+
+    return () => controller.abort();
+  }, [apiConfigured, branchAttempt]);
 
   function updateField<K extends keyof BookingForm>(
     field: K,
@@ -82,26 +138,28 @@ export default function BookTestPageClient() {
     }));
   }
 
-  function toggleTest(test: TestSummary) {
+  function toggleTest(test: (typeof selectedTests)[number] | NonNullable<typeof result>["items"][number]) {
     setSelectionError("");
 
-    setSelectedTests((current) => {
-      const alreadySelected = current.some(
-        (item) => item.id === test.id,
-      );
+    const alreadySelected = selectedTests.some(
+      (item) => item.id === test.id,
+    );
 
-      if (alreadySelected) {
-        return current.filter((item) => item.id !== test.id);
-      }
+    if (alreadySelected) {
+      removeTestFromCart(test.id);
+      return;
+    }
 
-      return [...current, test];
-    });
+    const added = addTestToCart(test);
+
+    if (!added) {
+      setSelectionError("This test is already in your selection.");
+    }
   }
 
   function removeTest(testId: string) {
-    setSelectedTests((current) =>
-      current.filter((test) => test.id !== testId),
-    );
+    removeTestFromCart(testId);
+    setSelectionError("");
   }
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
@@ -110,6 +168,12 @@ export default function BookTestPageClient() {
     if (apiConfigured && !isLoading) {
       search.submit();
     }
+  }
+
+  function handleBranchRetry() {
+    setBranchError(null);
+    setBranchStatus("loading");
+    setBranchAttempt((current) => current + 1);
   }
 
   return (
@@ -147,9 +211,9 @@ export default function BookTestPageClient() {
               </p>
             </div>
 
-            <div className={styles.bookingLayout}>
-              {/* LIVE TEST SELECTOR */}
+<PackageSelectionPanel />
 
+            <div className={styles.bookingLayout}>
               <section
                 id="test-selector"
                 className={styles.cataloguePanel}
@@ -396,8 +460,6 @@ export default function BookTestPageClient() {
                 )}
               </section>
 
-              {/* SELECTED TESTS */}
-
               <aside
                 className={styles.selectionPanel}
                 aria-labelledby="selection-heading"
@@ -446,6 +508,12 @@ export default function BookTestPageClient() {
                           <span>
                             {test.code || test.category}
                           </span>
+
+                          <span>
+                            {test.price === null
+                              ? "Price pending confirmation"
+                              : formatPrice(test.price)}
+                          </span>
                         </div>
 
                         <button
@@ -467,21 +535,20 @@ export default function BookTestPageClient() {
                 </div>
 
                 <p className={styles.selectionHint}>
+                  This selection is shared with your test cart.
                   Final availability and pricing are confirmed
                   by the laboratory.
                 </p>
 
                 <Link
-                  href="/tests"
+                  href="/cart"
                   className={styles.catalogueLink}
                 >
-                  View full catalogue
+                  Review your cart
                   <span aria-hidden="true">↗</span>
                 </Link>
               </aside>
             </div>
-
-            {/* PATIENT AND COLLECTION DETAILS */}
 
             <section
               id="booking-request"
@@ -615,7 +682,9 @@ export default function BookTestPageClient() {
 
                     <span className={styles.methodContent}>
                       <strong>Visit the laboratory</strong>
-                      <span>{siteConfig.address}</span>
+                      <span>
+                        Select an available laboratory branch below.
+                      </span>
                     </span>
                   </label>
 
@@ -646,6 +715,97 @@ export default function BookTestPageClient() {
                     </span>
                   </label>
                 </div>
+
+                {form.method === "branch" && (
+                  <div className={styles.field}>
+                    <label htmlFor="booking-branch">
+                      Choose a laboratory branch
+                    </label>
+
+                    {!apiConfigured && (
+                      <div className={styles.statePanel} role="status">
+                        <strong>Branch connection unavailable.</strong>
+                        <p>
+                          Configure the backend connection to load
+                          published laboratory branches.
+                        </p>
+                      </div>
+                    )}
+
+                    {branchesLoading && (
+                      <div className={styles.statePanel} role="status">
+                        <span className={styles.spinner} />
+                        <strong>Loading laboratory branches</strong>
+                        <p>
+                          Retrieving active branches from the laboratory.
+                        </p>
+                      </div>
+                    )}
+
+                    {branchStatus === "error" && (
+                      <div className={styles.statePanel} role="alert">
+                        <strong>Branches could not be loaded.</strong>
+                        <p>
+                          {branchError ??
+                            "Please try again."}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={handleBranchRetry}
+                        >
+                          Try again
+                        </button>
+                      </div>
+                    )}
+
+                    {branchStatus === "success" &&
+                      branches.length === 0 && (
+                        <div className={styles.statePanel} role="status">
+                          <strong>No active branches are published.</strong>
+                          <p>
+                            Please contact the laboratory to confirm
+                            where your test can be collected.
+                          </p>
+                        </div>
+                      )}
+
+                    {branchStatus === "success" &&
+                      branches.length > 0 && (
+                        <>
+                          <select
+                            id="booking-branch"
+                            value={form.branchId}
+                            onChange={(event) =>
+                              updateField("branchId", event.target.value)
+                            }
+                          >
+                            <option value="">
+                              Select a laboratory branch
+                            </option>
+
+                            {branches.map((branch) => (
+                              <option
+                                key={branch.id}
+                                value={branch.id}
+                              >
+                                {branch.name}
+                              </option>
+                            ))}
+                          </select>
+
+                          {selectedBranch && (
+                            <span className={styles.fieldHint}>
+                              {selectedBranch.address}
+                              {" · "}
+                              {selectedBranch.phone}
+                              {" · "}
+                              {selectedBranch.timings}
+                            </span>
+                          )}
+                        </>
+                      )}
+                  </div>
+                )}
 
                 {form.method === "home" && (
                   <div className={styles.field}>
