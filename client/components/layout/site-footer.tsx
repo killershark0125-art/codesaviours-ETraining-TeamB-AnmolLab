@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -21,6 +22,8 @@ const patientLinks = [
   { label: "Contact the laboratory", href: "/contact" },
   { label: "Privacy policy", href: "/privacy" },
   { label: "Terms of service", href: "/terms" },
+  { label: "Portal Access", href: "/access" },
+  { label: "Get in Touch", href: "/#contact" },
 ];
 
 export default function SiteFooter() {
@@ -50,17 +53,11 @@ export default function SiteFooter() {
             </p>
 
             <div className={styles.actions}>
-              <Link
-                href="/book"
-                className={styles.primaryAction}
-              >
+              <Link href="/book" className={styles.primaryAction}>
                 Book a Test
               </Link>
 
-              <Link
-                href="/reports"
-                className={styles.secondaryAction}
-              >
+              <Link href="/reports" className={styles.secondaryAction}>
                 Download Report
               </Link>
             </div>
@@ -120,8 +117,7 @@ export default function SiteFooter() {
 
         <div className={styles.footerBottom}>
           <span>
-            © 2026 {siteConfig.name}.
-            All rights reserved.
+            © 2026 {siteConfig.name}. All rights reserved.
           </span>
 
           <Link href="/" className={styles.backHome}>

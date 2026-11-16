@@ -1,6 +1,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { useId, type FormEvent } from "react";
 
 import VisualPageHero from "@/components/layout/visual-page-hero";
@@ -281,6 +282,10 @@ export default function TestCatalogue({
                         ? "Pending confirmation"
                         : formatPrice(test.price);
 
+                    const detailHref = `/tests/${encodeURIComponent(
+                      test.slug,
+                    )}`;
+
                     return (
                       <article className={styles.testCard} key={test.id}>
                         <div className={styles.cardTop}>
@@ -315,6 +320,15 @@ export default function TestCatalogue({
                             {priceLabel}
                           </strong>
                         </div>
+
+                        <Link
+                          href={detailHref}
+                          className={styles.testDetailLink}
+                          aria-label={`View details for ${test.name}`}
+                        >
+                          View test details
+                          <span aria-hidden="true">→</span>
+                        </Link>
                       </article>
                     );
                   })}

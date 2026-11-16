@@ -1,11 +1,18 @@
+
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { TestSummary } from "@/lib/types";
 
-const EMPTY_CART: TestSummary[] = [];
+import type {
+  HealthPackage,
+  TestSummary,
+} from "@/lib/types";
 
-let cart: TestSummary[] = EMPTY_CART;
+const EMPTY_TEST_CART: TestSummary[] = [];
+const EMPTY_PACKAGE_CART: HealthPackage[] = [];
+
+let testCart: TestSummary[] = EMPTY_TEST_CART;
+let packageCart: HealthPackage[] = EMPTY_PACKAGE_CART;
 
 const listeners = new Set<() => void>();
 
@@ -15,48 +22,106 @@ function emitChange() {
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
-function getSnapshot() {
-  return cart;
+function getTestSnapshot() {
+  return testCart;
 }
 
-function getServerSnapshot() {
-  return EMPTY_CART;
+function getPackageSnapshot() {
+  return packageCart;
+}
+
+function getServerTestSnapshot() {
+  return EMPTY_TEST_CART;
+}
+
+function getServerPackageSnapshot() {
+  return EMPTY_PACKAGE_CART;
 }
 
 export function useCart() {
   return useSyncExternalStore(
     subscribe,
-    getSnapshot,
-    getServerSnapshot,
+    getTestSnapshot,
+    getServerTestSnapshot,
   );
 }
 
-export function addTestToCart(test: TestSummary) {
-  if (cart.some((item) => item.id === test.id)) {
+export function usePackageCart() {
+  return useSyncExternalStore(
+    subscribe,
+    getPackageSnapshot,
+    getServerPackageSnapshot,
+  );
+}
+
+export function addTestToCart(test: TestSummary): boolean {
+  if (testCart.some((item) => item.id === test.id)) {
     return false;
   }
 
-  cart = [...cart, test];
+  testCart = [...testCart, test];
   emitChange();
 
   return true;
 }
 
 export function removeTestFromCart(testId: string) {
-  const nextCart = cart.filter((item) => item.id !== testId);
+  const nextCart = testCart.filter(
+    (item) => item.id !== testId,
+  );
 
-  if (nextCart.length === cart.length) return;
+  if (nextCart.length === testCart.length) return;
 
-  cart = nextCart.length > 0 ? nextCart : EMPTY_CART;
+  testCart = nextCart.length > 0
+    ? nextCart
+    : EMPTY_TEST_CART;
+
+  emitChange();
+}
+
+export function addPackageToCart(
+  healthPackage: HealthPackage,
+): boolean {
+  if (packageCart.some((item) => item.id === healthPackage.id)) {
+    return false;
+  }
+
+  packageCart = [...packageCart, healthPackage];
+  emitChange();
+
+  return true;
+}
+
+export function removePackageFromCart(packageId: string) {
+  const nextCart = packageCart.filter(
+    (item) => item.id !== packageId,
+  );
+
+  if (nextCart.length === packageCart.length) return;
+
+  packageCart = nextCart.length > 0
+    ? nextCart
+    : EMPTY_PACKAGE_CART;
+
   emitChange();
 }
 
 export function clearCart() {
-  if (cart.length === 0) return;
+  if (
+    testCart.length === 0 &&
+    packageCart.length === 0
+  ) {
+    return;
+  }
 
-  cart = EMPTY_CART;
+  testCart = EMPTY_TEST_CART;
+  packageCart = EMPTY_PACKAGE_CART;
+
   emitChange();
 }

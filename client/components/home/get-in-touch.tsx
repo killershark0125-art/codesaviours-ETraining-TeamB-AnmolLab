@@ -30,13 +30,13 @@ export default function GetInTouch() {
       <div className={styles.container}>
         <div className={styles.meta}>
           <span>08 / GET IN TOUCH</span>
-          <span>WE'RE HERE TO HELP</span>
+          <span>WE&apos;RE HERE TO HELP</span>
         </div>
 
         <header className={styles.heading}>
           <div>
             <span className={styles.eyebrow}>
-              LET'S CONNECT
+              LET&apos;S CONNECT
             </span>
 
             <h2 id="contact-heading" className={styles.headingTitle}>

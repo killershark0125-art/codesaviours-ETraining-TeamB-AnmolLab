@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -9,10 +10,13 @@ import SiteFooter from "@/components/layout/site-footer";
 import {
   addTestToCart,
   clearCart,
+  removePackageFromCart,
   removeTestFromCart,
   useCart,
+  usePackageCart,
 } from "@/lib/cart-store";
 
+import { calculateCartPricing } from "@/lib/cart-pricing";
 import { getApiBaseUrl } from "@/lib/api/http";
 import { RESULT_LIMIT } from "@/lib/api/tests";
 import { useTestSearch } from "@/lib/hooks/use-test-search";
@@ -23,7 +27,9 @@ import styles from "./cart.module.css";
 
 export default function CartPage() {
   const searchId = useId();
+
   const cart = useCart();
+  const packageCart = usePackageCart();
 
   const apiConfigured = Boolean(getApiBaseUrl());
 
@@ -41,46 +47,41 @@ export default function CartPage() {
   const totalPages =
     search.result?.pagination.totalPages ?? 0;
 
-  const pricing = useMemo(() => {
-    const confirmedItems = cart.filter(
-      (item) => item.price !== null && item.priceStatus === "confirmed",
-    );
+  const pricing = useMemo(
+    () => calculateCartPricing(cart, packageCart),
+    [cart, packageCart],
+  );
 
-    const pendingItems = cart.length - confirmedItems.length;
-
-    const confirmedSubtotal = confirmedItems.reduce(
-      (total, item) => total + (item.price ?? 0),
-      0,
-    );
-
-    return {
-      confirmedItems: confirmedItems.length,
-      pendingItems,
-      confirmedSubtotal,
-      hasPending: pendingItems > 0,
-    };
-  }, [cart]);
+  const selectionCount = cart.length + packageCart.length;
+  const pendingCount =
+    pricing.pendingPackageCount + pricing.pendingTestCount;
 
   const emailBody = [
     "Hello Anmol Health Care Lab,",
     "",
-    "I would like to enquire about the following selected tests:",
+    "I would like to enquire about the following selection:",
     "",
-    ...cart.map(
+    ...packageCart.flatMap((healthPackage, index) => [
+      `${index + 1}. HEALTH PACKAGE: ${healthPackage.name}`,
+      ...healthPackage.includedTests.map(
+        (test) => `   - ${test.name}`,
+      ),
+    ]),
+    ...pricing.standaloneTests.map(
       (test, index) =>
-        `${index + 1}. ${test.name}${
+        `${packageCart.length + index + 1}. TEST: ${test.name}${
           test.code ? ` (${test.code})` : ""
         }`,
     ),
     "",
-    "Please confirm their current availability and prices.",
+    "Please confirm availability and final pricing.",
     "",
     "Thank you.",
   ].join("\n");
 
   const emailHref =
     `mailto:${siteConfig.email}` +
-    `?subject=${encodeURIComponent("Test selection enquiry")}` +
+    `?subject=${encodeURIComponent("Laboratory selection enquiry")}` +
     `&body=${encodeURIComponent(emailBody)}`;
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
@@ -91,6 +92,16 @@ export default function CartPage() {
     }
   }
 
+  function isCoveredByPackage(testId: string, testSlug: string) {
+    return packageCart.some((healthPackage) =>
+      healthPackage.includedTests.some(
+        (includedTest) =>
+          includedTest.id === testId ||
+          (Boolean(testSlug) && includedTest.slug === testSlug),
+      ),
+    );
+  }
+
   return (
     <>
       <SiteHeader />
@@ -99,13 +110,13 @@ export default function CartPage() {
         <div className={styles.container}>
           <div className={styles.topline}>
             <span>ANMOL HEALTH CARE LAB</span>
-            <span>PATIENT SERVICES / TEST CART</span>
+            <span>PATIENT SERVICES / YOUR SELECTION</span>
           </div>
 
           <header className={styles.heading}>
             <div>
               <span className={styles.eyebrow}>
-                YOUR TEST SELECTION
+                YOUR LABORATORY SELECTION
               </span>
 
               <h1>
@@ -115,22 +126,28 @@ export default function CartPage() {
               </h1>
 
               <p>
-                Review your selected laboratory tests and prepare
-                an enquiry for the laboratory.
+                Review your chosen health packages and individual
+                tests before continuing with your enquiry.
               </p>
             </div>
 
             <div className={styles.countCard}>
-              <span>SELECTED TESTS</span>
-              <strong>{cart.length.toString().padStart(2, "0")}</strong>
+              <span>SELECTION ITEMS</span>
+              <strong>
+                {String(selectionCount).padStart(2, "0")}
+              </strong>
               <span>
-                {cart.length === 1 ? "TEST IN CART" : "TESTS IN CART"}
+                {packageCart.length}{" "}
+                {packageCart.length === 1 ? "PACKAGE" : "PACKAGES"}
+                {" · "}
+                {cart.length} {cart.length === 1 ? "TEST" : "TESTS"}
               </span>
             </div>
           </header>
 
           <div className={styles.layout}>
             <section className={styles.mainColumn}>
+              {/* Add individual tests */}
               <div className={styles.panel}>
                 <div className={styles.panelHeading}>
                   <div>
@@ -141,7 +158,7 @@ export default function CartPage() {
                   </div>
 
                   <Link href="/tests" className={styles.textLink}>
-                    Full catalogue ↗
+                    Full catalogue →
                   </Link>
                 </div>
 
@@ -151,7 +168,7 @@ export default function CartPage() {
                     <p>
                       Configure the backend connection to search
                       and add published tests. No sample tests are
-                      shown here.
+                      displayed here.
                     </p>
                   </div>
                 ) : (
@@ -161,7 +178,10 @@ export default function CartPage() {
                       onSubmit={handleSearch}
                       role="search"
                     >
-                      <label className={styles.srOnly} htmlFor={searchId}>
+                      <label
+                        className={styles.srOnly}
+                        htmlFor={searchId}
+                      >
                         Search tests
                       </label>
 
@@ -243,6 +263,11 @@ export default function CartPage() {
                                 (item) => item.id === test.id,
                               );
 
+                              const isCovered = isCoveredByPackage(
+                                test.id,
+                                test.slug,
+                              );
+
                               return (
                                 <article
                                   className={styles.availableItem}
@@ -264,7 +289,8 @@ export default function CartPage() {
 
                                   <div className={styles.availableAction}>
                                     <strong>
-                                      {test.price === null
+                                      {test.price === null ||
+                                      test.priceStatus !== "confirmed"
                                         ? "Price pending"
                                         : formatPrice(test.price)}
                                     </strong>
@@ -272,9 +298,13 @@ export default function CartPage() {
                                     <button
                                       type="button"
                                       onClick={() => addTestToCart(test)}
-                                      disabled={isAdded}
+                                      disabled={isAdded || isCovered}
                                     >
-                                      {isAdded ? "Added ✓" : "+ Add"}
+                                      {isCovered
+                                        ? "Included ✓"
+                                        : isAdded
+                                          ? "Added ✓"
+                                          : "+ Add"}
                                     </button>
                                   </div>
                                 </article>
@@ -320,16 +350,17 @@ export default function CartPage() {
                 )}
               </div>
 
+              {/* Selected packages and tests */}
               <div className={styles.panel}>
                 <div className={styles.panelHeading}>
                   <div>
                     <span className={styles.panelEyebrow}>
                       02 / YOUR SELECTION
                     </span>
-                    <h2>Selected tests</h2>
+                    <h2>Selected items</h2>
                   </div>
 
-                  {cart.length > 0 && (
+                  {selectionCount > 0 && (
                     <button
                       type="button"
                       className={styles.clearCart}
@@ -340,26 +371,81 @@ export default function CartPage() {
                   )}
                 </div>
 
-                {cart.length === 0 ? (
+                {selectionCount === 0 ? (
                   <div className={styles.emptyCart}>
-                    <span className={styles.emptyIcon} aria-hidden="true">
+                    <span
+                      className={styles.emptyIcon}
+                      aria-hidden="true"
+                    >
                       +
                     </span>
 
                     <h3>Your selection is empty.</h3>
 
                     <p>
-                      Search the live catalogue above and add the
-                      tests you would like to enquire about.
+                      Explore the laboratory catalogue or browse
+                      available health packages to get started.
                     </p>
 
                     <Link href="/tests">
-                      Explore the test catalogue ↗
+                      Explore the test catalogue →
+                    </Link>
+
+                    <Link href="/packages">
+                      Browse health packages →
                     </Link>
                   </div>
                 ) : (
                   <div className={styles.selectedList}>
-                    {cart.map((test, index) => (
+                    {packageCart.map((healthPackage, index) => (
+                      <article
+                        className={styles.selectedItem}
+                        key={healthPackage.id}
+                      >
+                        <span className={styles.selectedNumber}>
+                          P{String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        <div className={styles.selectedDetails}>
+                          <strong>{healthPackage.name}</strong>
+
+                          <span>
+                            HEALTH PACKAGE ·{" "}
+                            {healthPackage.includedTests.length} included{" "}
+                            {healthPackage.includedTests.length === 1
+                              ? "test"
+                              : "tests"}
+                          </span>
+
+                          {healthPackage.includedTests.length > 0 && (
+                            <span>
+                              {healthPackage.includedTests
+                                .map((test) => test.name)
+                                .join(", ")}
+                            </span>
+                          )}
+                        </div>
+
+                        <strong className={styles.selectedPrice}>
+                          {healthPackage.packagePrice === null
+                            ? "Pending"
+                            : formatPrice(healthPackage.packagePrice)}
+                        </strong>
+
+                        <button
+                          type="button"
+                          className={styles.removeButton}
+                          onClick={() =>
+                            removePackageFromCart(healthPackage.id)
+                          }
+                          aria-label={`Remove ${healthPackage.name} from selection`}
+                        >
+                          ×
+                        </button>
+                      </article>
+                    ))}
+
+                    {pricing.standaloneTests.map((test, index) => (
                       <article
                         className={styles.selectedItem}
                         key={test.id}
@@ -378,7 +464,8 @@ export default function CartPage() {
                         </div>
 
                         <strong className={styles.selectedPrice}>
-                          {test.price === null
+                          {test.price === null ||
+                          test.priceStatus !== "confirmed"
                             ? "Pending"
                             : formatPrice(test.price)}
                         </strong>
@@ -393,11 +480,22 @@ export default function CartPage() {
                         </button>
                       </article>
                     ))}
+
+                    {pricing.coveredTestCount > 0 && (
+                      <p className={styles.pendingNote}>
+                        {pricing.coveredTestCount} separately selected{" "}
+                        {pricing.coveredTestCount === 1 ? "test is" : "tests are"}{" "}
+                        already included in your selected package
+                        {packageCart.length === 1 ? "" : "s"}. They are
+                        not counted twice in the subtotal.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
             </section>
 
+            {/* Pricing summary */}
             <aside className={styles.summary}>
               <span className={styles.panelEyebrow}>
                 SELECTION SUMMARY
@@ -406,18 +504,31 @@ export default function CartPage() {
               <h2>Your enquiry.</h2>
 
               <div className={styles.summaryRow}>
-                <span>Selected tests</span>
-                <strong>{cart.length}</strong>
+                <span>Health packages</span>
+                <strong>{pricing.packageCount}</strong>
+              </div>
+
+              <div className={styles.summaryRow}>
+                <span>Individual test selections</span>
+                <strong>{pricing.testCount}</strong>
+              </div>
+
+              <div className={styles.summaryRow}>
+                <span>Tests covered by packages</span>
+                <strong>{pricing.coveredTestCount}</strong>
               </div>
 
               <div className={styles.summaryRow}>
                 <span>Prices confirmed</span>
-                <strong>{pricing.confirmedItems}</strong>
+                <strong>
+                  {pricing.confirmedPackages.length +
+                    pricing.confirmedTests.length}
+                </strong>
               </div>
 
               <div className={styles.summaryRow}>
                 <span>Prices pending</span>
-                <strong>{pricing.pendingItems}</strong>
+                <strong>{pendingCount}</strong>
               </div>
 
               <div className={styles.summaryTotal}>
@@ -428,37 +539,35 @@ export default function CartPage() {
                 </span>
 
                 <strong>
-                  {cart.length === 0
+                  {selectionCount === 0
                     ? "—"
                     : formatPrice(pricing.confirmedSubtotal)}
                 </strong>
               </div>
 
-              {pricing.hasPending && cart.length > 0 && (
+              {pricing.hasPending && selectionCount > 0 && (
                 <p className={styles.pendingNote}>
-                  Some test prices are not confirmed. The amount
-                  shown is only the subtotal of tests with confirmed
-                  prices, not the complete selection total.
+                  Some prices are not confirmed. The amount shown
+                  includes only packages and tests with confirmed
+                  prices. It is not the complete selection total.
                 </p>
               )}
 
               <a
-                href={
-                  cart.length > 0
-                    ? emailHref
-                    : `mailto:${siteConfig.email}`
-                }
+                href={emailHref}
                 className={
-                  cart.length > 0
+                  selectionCount > 0
                     ? styles.emailAction
                     : `${styles.emailAction} ${styles.disabledAction}`
                 }
-                aria-disabled={cart.length === 0}
+                aria-disabled={selectionCount === 0}
                 onClick={(event) => {
-                  if (cart.length === 0) event.preventDefault();
+                  if (selectionCount === 0) {
+                    event.preventDefault();
+                  }
                 }}
               >
-                Email test selection
+                Email selection
                 <span aria-hidden="true">↗</span>
               </a>
 
@@ -466,18 +575,18 @@ export default function CartPage() {
                 href={siteConfig.phones[0].href}
                 className={styles.callAction}
               >
-                Call to confirm booking
+                Call to confirm
               </a>
 
               <p className={styles.summaryDisclaimer}>
-                This cart prepares an enquiry only. It does not
+                This selection prepares an enquiry only. It does not
                 reserve a collection slot or confirm a booking.
-                Confirm availability and final pricing with the
-                laboratory.
+                Final availability and pricing must be confirmed
+                by the laboratory.
               </p>
 
               <Link href="/book" className={styles.bookingLink}>
-                Open booking form
+                Continue to booking
               </Link>
             </aside>
           </div>

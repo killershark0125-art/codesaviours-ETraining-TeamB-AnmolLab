@@ -1207,3 +1207,43 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+.testDetailLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  color: #303967;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.testDetailLink:hover {
+  color: #697dc4;
+}
+
+.testDetailLink:focus-visible {
+  border-radius: 3px;
+  outline: 2px solid #89a9ee;
+  outline-offset: 4px;
+}
+
+.testDetailLink span {
+  font-size: 16px;
+  transition: transform 180ms ease;
+}
+
+.testDetailLink:hover span {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testDetailLink,
+  .testDetailLink span {
+    transition: none;
+  }
+}
